@@ -1,0 +1,57 @@
+import Database from 'better-sqlite3'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+// Ensure Electron is initialized before accessing paths
+const dbPath = path.join(fileURLToPath(import.meta.url), '../../main.db');
+console.log(`DB Path: ${dbPath} \n`);
+
+//create or connect to database
+const db = new Database(dbPath)
+
+const initProjectsTable = `
+CREATE TABLE IF NOT EXISTS projects (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_number TEXT UNIQUE,
+    project_description TEXT,
+    customer_name TEXT,
+    project_manager TEXT,
+    kickoff_date_planned INTEGER,
+    kickoff_date_act INTEGER,
+    mih_date_planned INTEGER,
+    mih_date_act INTEGER,
+    inspection_date_planned INTEGER,
+    inspection_date_act INTEGER,
+    process_planning_date_planned INTEGER,
+    process_planning_date_act INTEGER,
+    milton_date_planned INTEGER,
+    pih_date_planned INTEGER,
+    pih_date_act INTEGER,
+    mfg_date_planned INTEGER,
+    mfg_date_act INTEGER,
+    rih_date_planned INTEGER,
+    rih_date_act INTEGER,
+    hr_assy_date_planned INTEGER,
+    assy_date_planned INTEGER,
+    assy_date_act INTEGER,
+    test_date_planned INTEGER,
+    test_date_act INTEGER,
+    pp_recut_date_planned INTEGER,
+    pp_recut_date_act INTEGER,
+    recut_mfg_date_planned INTEGER,
+    post_recut_test_date_planned INTEGER,
+    dev_test_date_planned INTEGER,
+    machine_comt_date_planned INTEGER,
+    system_test_planned INTEGER,
+    system_test_act INTEGER,
+    ops_complete_date_planned INTEGER,
+    ship_date_planned INTEGER,
+    ship_date_act INTEGER,
+    status_notes TEXT
+)`
+
+db.prepare(initProjectsTable).run()
+console.log("Database is ready!");
+
+
+export default db
