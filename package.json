@@ -1,0 +1,22 @@
+{
+  "name": "cm-tracksyst",
+  "productName": "cm-tracksyst",
+  "version": "0.1",
+  "description": "API for this application",
+  "keywords": [],
+  "author": "Pedro Guerrero",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "scripts": {
+    "start": "nodemon ./app.js"
+  }
+}

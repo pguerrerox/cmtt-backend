@@ -1,14 +1,3 @@
-import Database from 'better-sqlite3'
-import path from 'path'
-import { fileURLToPath } from 'url'
-
-// Ensure Electron is initialized before accessing paths
-const dbPath = path.join(fileURLToPath(import.meta.url), '../../main.db');
-console.log(`DB Path: ${dbPath} \n`);
-
-//create or connect to database
-const db = new Database(dbPath)
-
 const initProjectsTable = `
 CREATE TABLE IF NOT EXISTS projects (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,8 +39,4 @@ CREATE TABLE IF NOT EXISTS projects (
     status_notes TEXT
 )`
 
-db.prepare(initProjectsTable).run()
-console.log("Database is ready!");
-
-
-export default db
+export default initProjectsTable
