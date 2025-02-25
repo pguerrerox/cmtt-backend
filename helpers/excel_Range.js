@@ -1,4 +1,4 @@
-function range (defaultRange, newColumn, newRow) {
+export default function (defaultRange, newColumn, newRow) {
     // ERROR HANDLING: Basic type check for the parameters.
 
     // Check if the string has at least two characters
@@ -16,5 +16,3 @@ function range (defaultRange, newColumn, newRow) {
     // Join the array back into a string
     return charArray.join('');
 }
-
-export default range

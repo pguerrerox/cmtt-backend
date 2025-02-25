@@ -1,4 +1,4 @@
-const headers = {
+export default {
     originalHeaders: ["project_number", "customer_name", "project_manager", "kickoff_date_planned", "mih_date_planned", "var_1", "inspection_date_planned", "var_2", "process_planning_date_planned", "var_3", "milton_date_planned", "var_4", "pih_date_planned", "var_5", "mfg_date_planned", "var_6", "rih_date_planned", "var_7", "hr_assy_date_planned", "var_8", "assy_date_planned", "var_9", "test_date_planned", "var_10", "pp_recut_date_planned", "var_11", "recut_mfg_date_planned", "var_12", "post_recut_test_date_planned", "var_13", "dev_test_date_planned", "var_14", "machine_comt_date_planned", "var_15", "system_test_planned", "var_16", "ops_complete_date_planned", "var_17", "ship_date_planned", "var_18", "status_notes"],
     finalHeaders: {
         project_number: null,                   //row 1
@@ -59,5 +59,3 @@ const headers = {
         status_notes: null                      //row 1
     }
 }
-
-export default headers
