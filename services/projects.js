@@ -59,8 +59,14 @@ export const insertProjects = (db, data) => {
     batchInsert(data)
     return newlyInserted
 }
-export const getAllProjects = (db) => { db.prepare(`SELECT * FROM projects;`).all() }
-export const getProjectByProjectNumber = (db, projectNumber) => { db.prepare(``).all() }
+export const getAllProjects = (db) => {
+    return db.prepare(`SELECT * FROM projects;`).all()
+}
+export const getProjectByProjectNumber = (db, project_number) => {
+    return db.prepare(`SELECT * FROM projects WHERE project_number = ?;`).get(project_number)
+}
+
+
 export const getProjectByProjectManager = (db) => { db.prepare(``).all() }
 export const getAllProjectManagers = (db) => { db.prepare(`SELECT * FROM projects;`) }
 export const updateProject = (db) => { db.prepare(``) }
