@@ -1,5 +1,5 @@
 import express from 'express'
-import { insertProjects, getAllProjects, getProjectByProjectNumber } from '../services/projects.js'
+import { insertProjects, getAllProjects, getProjectByProjectNumber, getProjectsByProjectManager } from '../services/projects.js'
 import dataReadyForSQLite from '../helpers/excel_DataReadyForSQLite.js'
 
 
@@ -28,13 +28,13 @@ router.get('/getAllProjects', (req, res) => {
         res.status(500).json({ error: err.message })
     }
 })
-router.get('/getProjectsByProjectNumber/:project_number', (req, res) => {
+router.get('/getProjectByProjectNumber/:project_number', (req, res) => {
     console.log(`[${new Date().toISOString()}] 🔄 GET request received at ${req.originalUrl}`);
     try {
         if (/^\d{6}$/.test(req.params.project_number)) {
             res.json(getProjectByProjectNumber(req.db, req.params.project_number))
         } else {
-            const err = new Error(`Project Number - ${req.params.project_number} is not valid`);
+            const err = new Error(`Project Number "${req.params.project_number}" is not valid`);
             console.error(`Error: ${err}`)
             res.status(500).json({ error: err.message })
         }
@@ -44,6 +44,25 @@ router.get('/getProjectsByProjectNumber/:project_number', (req, res) => {
         res.status(500).json({ error: err.message })
     }
 })
+router.get('/getProjectsByProjectManager/:project_manager', (req, res) => {
+    console.log(`[${new Date().toISOString()}] 🔄 GET request received at ${req.originalUrl}`);
+    try {
+        const project_manager = req.params.project_manager.toUpperCase()
+        if (/^[a-zA-Z]+$/.test(project_manager)) {
+            res.json(getProjectsByProjectManager(req.db, project_manager))
+        } else {
+            const err = new Error(`Project Manager "${req.params.project_manager}" is not valid`);
+            console.error(`Error: ${err}`)
+            res.status(500).json({ error: err.message })
+        }
+    }
+    catch (err) {
+        console.error(`Error fetching projects: ${err}`);
+        res.status(500).json({ error: err.message })
+    }
+})
+
+
 
 export default (db) => {
     return router;

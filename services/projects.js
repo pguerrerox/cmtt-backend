@@ -1,4 +1,4 @@
-export const insertProjects = (db, data) => {
+export const insertProjects = (db, data) => { // insert all projects (no repeating existent) on the database from the excel operations schedule
     const stmt = db.prepare(`INSERT OR IGNORE INTO projects (
         project_number, project_description, customer_name, project_manager,
         kickoff_date_planned, kickoff_date_act, mih_date_planned, mih_date_act,
@@ -59,14 +59,15 @@ export const insertProjects = (db, data) => {
     batchInsert(data)
     return newlyInserted
 }
-export const getAllProjects = (db) => {
+export const getAllProjects = (db) => { // return all projects on the database
     return db.prepare(`SELECT * FROM projects;`).all()
 }
-export const getProjectByProjectNumber = (db, project_number) => {
+export const getProjectByProjectNumber = (db, project_number) => { // return one project for a given a project number - 6 digit number
     return db.prepare(`SELECT * FROM projects WHERE project_number = ?;`).get(project_number)
 }
+export const getProjectsByProjectManager = (db, project_manager) => { // return all projects for a given project manager name - only letters
+    return db.prepare(`SELECT * FROM projects WHERE project_manager = ?`).all(project_manager) 
+}
+export const getAllProjectManagers = (db) => { // return all project managers without duplicates 
+    return db.prepare(`SELECT DISTINCT project_manager FROM projects;`).all }
 
-
-export const getProjectByProjectManager = (db) => { db.prepare(``).all() }
-export const getAllProjectManagers = (db) => { db.prepare(`SELECT * FROM projects;`) }
-export const updateProject = (db) => { db.prepare(``) }
