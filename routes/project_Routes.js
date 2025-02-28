@@ -1,7 +1,12 @@
 import express from 'express'
-import { insertProjects, getAllProjects, getProjectByProjectNumber, getProjectsByProjectManager } from '../services/projects.js'
 import dataReadyForSQLite from '../helpers/excel_DataReadyForSQLite.js'
-
+import {
+    insertProjects,
+    getAllProjects,
+    getProjectByProjectNumber,
+    getProjectsByProjectManager,
+    getAllProjectManagers
+} from '../services/projects.js'
 
 const router = express.Router()
 
@@ -61,7 +66,17 @@ router.get('/getProjectsByProjectManager/:project_manager', (req, res) => {
         res.status(500).json({ error: err.message })
     }
 })
-
+router.get('/projectmanagers', (req, res) => {
+    console.log(`[${new Date().toISOString()}] 🔄 GET request received at ${req.originalUrl}`);
+    try {
+        const data = getAllProjectManagers(req.db)
+        res.json(data)
+    }
+    catch (err) {
+        console.error(`Error fetching projects: ${err}`);
+        res.status(500).json({ error: err.message })
+    }
+})
 
 
 export default (db) => {

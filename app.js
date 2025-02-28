@@ -1,5 +1,6 @@
 import dotenv from 'dotenv'
 import express from 'express'
+import cors from 'cors'
 import db from './db.js'
 
 // Load environment variables
@@ -8,8 +9,10 @@ dotenv.config()
 // Initialize Express aspp
 const app = express()
 
+
 // Middlewares
 app.use(express.json())
+app.use(cors());
 app.use((req, res, next) => {
   req.db = db
   next()

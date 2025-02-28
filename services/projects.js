@@ -69,5 +69,6 @@ export const getProjectsByProjectManager = (db, project_manager) => { // return 
     return db.prepare(`SELECT * FROM projects WHERE project_manager = ?`).all(project_manager) 
 }
 export const getAllProjectManagers = (db) => { // return all project managers without duplicates 
-    return db.prepare(`SELECT DISTINCT project_manager FROM projects;`).all }
+    return db.prepare(`SELECT DISTINCT project_manager FROM projects;`).all()
+}
 
