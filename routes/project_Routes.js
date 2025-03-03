@@ -1,16 +1,19 @@
 import express from 'express'
+import { verifyToken } from '../auth.js'
 import dataReadyForSQLite from '../helpers/excel_DataReadyForSQLite.js'
 import {
     insertProjects,
     getAllProjects,
     getProjectByProjectNumber,
     getProjectsByProjectManager,
-    getAllProjectManagers
+    // getAllProjectManagers
 } from '../services/projects.js'
 
 const router = express.Router()
 
-router.post('/update-database', (req, res) => {
+// ###############
+// AUTH REQUIRED
+router.post('/update-projects', verifyToken, (req, res) => {
     console.log(`[${new Date().toISOString()}] 📩 POST request received at ${req.originalUrl}`);
     try {
         const data = dataReadyForSQLite()
@@ -22,18 +25,7 @@ router.post('/update-database', (req, res) => {
         res.status(500).json({ error: err.message })
     }
 })
-router.get('/getAllProjects', (req, res) => {
-    console.log(`[${new Date().toISOString()}] 🔄 GET request received at ${req.originalUrl}`);
-    try {
-        const data = getAllProjects(req.db)
-        res.json(data)
-    }
-    catch (err) {
-        console.error(`Error fetching projects: ${err}`);
-        res.status(500).json({ error: err.message })
-    }
-})
-router.get('/getProjectByProjectNumber/:project_number', (req, res) => {
+router.get('/search-project/:project_number', verifyToken, (req, res) => {
     console.log(`[${new Date().toISOString()}] 🔄 GET request received at ${req.originalUrl}`);
     try {
         if (/^\d{6}$/.test(req.params.project_number)) {
@@ -49,7 +41,7 @@ router.get('/getProjectByProjectNumber/:project_number', (req, res) => {
         res.status(500).json({ error: err.message })
     }
 })
-router.get('/getProjectsByProjectManager/:project_manager', (req, res) => {
+router.get('/projects/:project_manager', verifyToken, (req, res) => {
     console.log(`[${new Date().toISOString()}] 🔄 GET request received at ${req.originalUrl}`);
     try {
         const project_manager = req.params.project_manager.toUpperCase()
@@ -66,10 +58,14 @@ router.get('/getProjectsByProjectManager/:project_manager', (req, res) => {
         res.status(500).json({ error: err.message })
     }
 })
-router.get('/projectmanagers', (req, res) => {
+
+// ###############
+// AUTH NOT REQUIRED
+
+router.get('/projects', (req, res) => {
     console.log(`[${new Date().toISOString()}] 🔄 GET request received at ${req.originalUrl}`);
     try {
-        const data = getAllProjectManagers(req.db)
+        const data = getAllProjects(req.db)
         res.json(data)
     }
     catch (err) {

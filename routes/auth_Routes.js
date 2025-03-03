@@ -6,15 +6,19 @@ const router = express.Router();
 router.post('/login', (req, res) => {
     console.log(`[${new Date().toISOString()}] 📩 POST request received at ${req.originalUrl}`);
     const { managerName } = req.body;
-    
+
     if (!managerName) {
         return res.status(400).json({ message: 'Manager name required' });
     }
     const token = generateToken(managerName);
-    res.cookie('token', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }); // 24 hours
-    res.json({ message: `${managerName} has Logged in` });
+    res.cookie('token', token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+        maxAge: 24 * 60 * 60 * 1000 //24 hours
+    });
+    res.json({ message: `${managerName} has Logged in successfully.` });
 });
-
 router.post('/logout', (req, res) => {
     console.log(`[${new Date().toISOString()}] 📩 POST request received at ${req.originalUrl}`);
     res.clearCookie('token');

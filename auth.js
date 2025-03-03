@@ -15,6 +15,6 @@ export const verifyToken = (req, res, next) => {
         next()
     }
     catch (err) {
-        res.status(403).json({ message: "Invalid Token" })
+        res.status(403).json({ message: "Invalid Token, please log in." })
     }
 }
