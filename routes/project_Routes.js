@@ -12,6 +12,20 @@ import {
 const router = express.Router()
 
 // ###############
+// AUTH NOT REQUIRED
+router.get('/projects', (req, res) => {
+    console.log(`[${new Date().toISOString()}] 🔄 GET request received at ${req.originalUrl}`);
+    try {
+        const data = getAllProjects(req.db)
+        res.json(data)
+    }
+    catch (err) {
+        console.error(`Error fetching projects: ${err}`);
+        res.status(500).json({ error: err.message })
+    }
+})
+
+// ###############
 // AUTH REQUIRED
 router.post('/update-projects', verifyToken, (req, res) => {
     console.log(`[${new Date().toISOString()}] 📩 POST request received at ${req.originalUrl}`);
@@ -59,20 +73,6 @@ router.get('/projects/:project_manager', verifyToken, (req, res) => {
     }
 })
 
-// ###############
-// AUTH NOT REQUIRED
-
-router.get('/projects', (req, res) => {
-    console.log(`[${new Date().toISOString()}] 🔄 GET request received at ${req.originalUrl}`);
-    try {
-        const data = getAllProjects(req.db)
-        res.json(data)
-    }
-    catch (err) {
-        console.error(`Error fetching projects: ${err}`);
-        res.status(500).json({ error: err.message })
-    }
-})
 
 
 export default (db) => {

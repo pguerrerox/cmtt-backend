@@ -1,32 +1,29 @@
 import express from 'express'
 import { verifyToken } from '../auth.js'
 import {
-    insertManagers,
-    getManagers,
+    insertAllManagers,
+    getAllManagers,
+    updateAllManagers,
     getActiveManagers
-} from '../services/managers.js'
+} from '../services/managersServ.js'
 
 
 const router = express.Router()
-router.post('/insert', (req, res) => {
+router.post('/set-managers', (req, res) => {
     console.log(`[${new Date().toISOString()}] 📩 POST request received at ${req.originalUrl}`);
     try {
-        const insertedManagers = insertManagers(req.db)
-        res.json({ message: `Inserted ${insertedManagers} managers` })
+        const managersInserted = insertAllManagers(req.db)
+        res.json({ message: `Inserted ${managersInserted} managers` })
      }
     catch (err) {
         console.error('Error at POST-"/update-managers": ', err);
         res.status(500).json({ error: err.message })
     }
-
-
-
 })
-
 router.get('/managers', (req, res) => {
     console.log(`[${new Date().toISOString()}] 🔄 GET request received at ${req.originalUrl}`);
     try {
-        const data = getAllProjectManagers(req.db)
+        const data = getAllManagers(req.db)
         res.json(data)
     }
     catch (err) {
@@ -34,6 +31,18 @@ router.get('/managers', (req, res) => {
         res.status(500).json({ error: err.message })
     }
 })
+router.post('/update-managers', (req, res)=>{
+    console.log(`[${new Date().toISOString()}] 📩 POST request received at ${req.originalUrl}`);
+    try {
+        const updatedManagers = updateAllManagers(req.db, )
+        res.json({ message: `Inserted ${managersInserted} managers` })
+     }
+    catch (err) {
+        console.error('Error at POST-"/update-managers": ', err);
+        res.status(500).json({ error: err.message })
+    }
+})
+
 router.get('managers-active', () => { })
 
 

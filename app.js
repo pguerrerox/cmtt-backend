@@ -21,12 +21,12 @@ app.use((req, res, next) => {
 })
 
 // Declaring routes
-import auth_Routes from './routes/auth_Routes.js'
 import projects from './routes/project_Routes.js'
 import managers from './routes/manager_Routes.js'
+app.use('/api', projects(db), managers(db))
+
+import auth_Routes from './routes/auth_Routes.js'
 app.use('/auth', auth_Routes)
-app.use('/api', projects(db))
-app.use('/api/managers', managers(db))
 
 
 // Start the server
