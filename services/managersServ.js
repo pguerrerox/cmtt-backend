@@ -21,4 +21,3 @@ export const updateAllManagers = (db, isActive, project_manager) => {
 export const getActiveManagers = (db) => {
     return db.prepate(`SELECT * FROM managers WHERE isActive=true`).all()
 }
-

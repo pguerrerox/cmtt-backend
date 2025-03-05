@@ -31,6 +31,8 @@ router.get('/managers', (req, res) => {
         res.status(500).json({ error: err.message })
     }
 })
+
+// CHECK HERE
 router.post('/update-managers', (req, res)=>{
     console.log(`[${new Date().toISOString()}] 📩 POST request received at ${req.originalUrl}`);
     try {

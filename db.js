@@ -3,7 +3,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import initProjectsTable from './models/projectsModel.js'
 import initManagersTable from './models/managersModel.js'
-import initStoresTable from './models/storesModel.js'
+import initSettingsTable from './models/settingsModel.js'
 
 
 // Prepare filepath for Database
@@ -21,7 +21,7 @@ console.log('DB-> Projects table initialized')
 db.prepare(initManagersTable).run()
 console.log('DB-> Managers table initialized')
 
-db.prepare(initStoresTable).run()
+db.prepare(initSettingsTable).run()
 console.log('DB-> State table initialized')
 
 export default db

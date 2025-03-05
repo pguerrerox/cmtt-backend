@@ -23,7 +23,8 @@ app.use((req, res, next) => {
 // Declaring routes
 import projects from './routes/project_Routes.js'
 import managers from './routes/manager_Routes.js'
-app.use('/api', projects(db), managers(db))
+import settings from './routes/settings_Routes.js'
+app.use('/api', projects(db), managers(db), settings(db))
 
 import auth_Routes from './routes/auth_Routes.js'
 app.use('/auth', auth_Routes)
