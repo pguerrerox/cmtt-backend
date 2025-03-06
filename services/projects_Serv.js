@@ -57,6 +57,7 @@ export const insertProjects = (db, data) => { // insert all projects (no repeati
         }
     })
     batchInsert(data)
+    console.log(`Projects inserted/updated: ${newlyInserted}`);
     return newlyInserted
 }
 export const getAllProjects = (db) => { // return all projects on the database

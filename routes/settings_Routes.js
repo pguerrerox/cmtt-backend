@@ -1,7 +1,7 @@
 import express from 'express'
 import {
     saveStore
-} from '../services/settingsServ.js'
+} from '../services/settings_Serv.js'
 
 const router = express.Router()
 router.post('/save-settings', (req, res) => {

@@ -1,18 +1,19 @@
 import express from 'express'
 import { verifyToken } from '../auth.js'
 import {
-    insertAllManagers,
-    getAllManagers,
-    updateAllManagers,
-    getActiveManagers
-} from '../services/managersServ.js'
-
+    insertManagers,
+    getManagers,
+    updateManagers
+} from '../services/managers_Serv.js'
 
 const router = express.Router()
-router.post('/set-managers', (req, res) => {
+
+// ###############
+// AUTH NOT REQUIRED
+router.post('/insertmanagers', (req, res) => {
     console.log(`[${new Date().toISOString()}] 📩 POST request received at ${req.originalUrl}`);
     try {
-        const managersInserted = insertAllManagers(req.db)
+        const managersInserted = insertManagers(req.db)
         res.json({ message: `Inserted ${managersInserted} managers` })
      }
     catch (err) {
@@ -20,23 +21,21 @@ router.post('/set-managers', (req, res) => {
         res.status(500).json({ error: err.message })
     }
 })
-router.get('/managers', (req, res) => {
+router.get('/getManagers', (req, res) => {
     console.log(`[${new Date().toISOString()}] 🔄 GET request received at ${req.originalUrl}`);
     try {
-        const data = getAllManagers(req.db)
+        const data = getManagers(req.db)
         res.json(data)
     }
     catch (err) {
-        console.error(`Error on ${req.originalUrl}: ${err}`);
+        console.error(`Error on ${req.originalUrl} - ${err}`);
         res.status(500).json({ error: err.message })
     }
 })
-
-// CHECK HERE
-router.post('/update-managers', (req, res)=>{
+router.post('/updateManagers', (req, res)=>{
     console.log(`[${new Date().toISOString()}] 📩 POST request received at ${req.originalUrl}`);
     try {
-        const updatedManagers = updateAllManagers(req.db, )
+        const updatedManagers = updateManagers(req.db, )
         res.json({ message: `Inserted ${managersInserted} managers` })
      }
     catch (err) {
@@ -45,7 +44,9 @@ router.post('/update-managers', (req, res)=>{
     }
 })
 
-router.get('managers-active', () => { })
+// ###############
+// AUTH REQUIRED
+
 
 
 export default (db) => {

@@ -10,7 +10,6 @@ dotenv.config()
 // Initialize Express aspp
 const app = express()
 
-
 // Middlewares
 app.use(express.json())
 app.use(cors({origin: 'http://localhost:5173', credentials: true}))
@@ -21,14 +20,13 @@ app.use((req, res, next) => {
 })
 
 // Declaring routes
-import projects from './routes/project_Routes.js'
-import managers from './routes/manager_Routes.js'
+import projects from './routes/projects_Routes.js'
+import managers from './routes/managers_Routes.js'
 import settings from './routes/settings_Routes.js'
 app.use('/api', projects(db), managers(db), settings(db))
 
 import auth_Routes from './routes/auth_Routes.js'
 app.use('/auth', auth_Routes)
-
 
 // Start the server
 const PORT = process.env.PORT || 5000
