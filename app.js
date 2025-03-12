@@ -12,10 +12,11 @@ const app = express()
 
 // Middlewares
 app.use(express.json())
-// app.use(cors({
-//   origin: ['http://localhost:5173', 'http://10.0.32.*:5173'],
-//   credentials: true
-// }))
+app.use(cors())
+// {
+  // origin: ['http://localhost:5173', 'http://10.0.32.*:5173'],
+  // credentials: true
+// }
 app.use(cookieParser())
 app.use((req, res, next) => {
   req.db = db

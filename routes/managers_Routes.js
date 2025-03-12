@@ -8,19 +8,7 @@ import {
 
 const router = express.Router()
 
-// ###############
-// AUTH NOT REQUIRED
-router.post('/insertmanagers', (req, res) => {
-    console.log(`[${new Date().toISOString()}] 📩 POST request received at ${req.originalUrl}`);
-    try {
-        const managersInserted = insertManagers(req.db)
-        res.json({ message: `Inserted ${managersInserted} managers` })
-     }
-    catch (err) {
-        console.error('Error at POST-"/update-managers": ', err);
-        res.status(500).json({ error: err.message })
-    }
-})
+// GET
 router.get('/getManagers', (req, res) => {
     console.log(`[${new Date().toISOString()}] 🔄 GET request received at ${req.originalUrl}`);
     try {
@@ -32,10 +20,24 @@ router.get('/getManagers', (req, res) => {
         res.status(500).json({ error: err.message })
     }
 })
+
+
+// POST
 router.post('/updateManagers', (req, res)=>{
     console.log(`[${new Date().toISOString()}] 📩 POST request received at ${req.originalUrl}`);
     try {
         const updatedManagers = updateManagers(req.db, )
+        res.json({ message: `Inserted ${managersInserted} managers` })
+    }
+    catch (err) {
+        console.error('Error at POST-"/update-managers": ', err);
+        res.status(500).json({ error: err.message })
+    }
+})
+router.post('/insertmanagers', (req, res) => {
+    console.log(`[${new Date().toISOString()}] 📩 POST request received at ${req.originalUrl}`);
+    try {
+        const managersInserted = insertManagers(req.db)
         res.json({ message: `Inserted ${managersInserted} managers` })
      }
     catch (err) {
@@ -43,10 +45,6 @@ router.post('/updateManagers', (req, res)=>{
         res.status(500).json({ error: err.message })
     }
 })
-
-// ###############
-// AUTH REQUIRED
-
 
 
 export default (db) => {

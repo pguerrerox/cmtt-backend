@@ -1,7 +1,7 @@
 export default [
     {
         name: 'GUEST',
-        fullname: 'Guest Access',
+        fullname: 'Guest',
         email: null,
         role: null,
         isActive: 1

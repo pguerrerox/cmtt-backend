@@ -23,22 +23,24 @@ router.get('/projects', (req, res) => {
         res.status(500).json({ error: err.message })
     }
 })
-
-// ###############
-// AUTH REQUIRED
-router.post('/update-projects', verifyToken, (req, res) => {
-    console.log(`[${new Date().toISOString()}] 📩 POST request received at ${req.originalUrl}`);
+router.get('/projects/:project_manager', (req, res) => {
+    console.log(`[${new Date().toISOString()}] 🔄 GET request received at ${req.originalUrl}`);
     try {
-        const data = dataReadyForSQLite()
-        const insertedRows = insertProjects(req.db, data)
-        res.json({ message: `Inserted ${insertedRows} projects` })
+        const project_manager = req.params.project_manager        
+        if (/^[a-zA-Z]+$/.test(project_manager)) {
+            res.json(getProjectsByProjectManager(req.db, project_manager))
+        } else {
+            const err = new Error(`Project Manager "${req.params.project_manager}" is not valid`);
+            console.error(`Error: ${err}`)
+            res.status(500).json({ error: err.message })
+        }
     }
     catch (err) {
-        console.error('Error at POST-"/update-database": ', err)
+        console.error(`Error fetching projects: ${err}`);
         res.status(500).json({ error: err.message })
     }
 })
-router.get('/search-project/:project_number', verifyToken, (req, res) => {
+router.get('/search-project/:project_number', (req, res) => {
     console.log(`[${new Date().toISOString()}] 🔄 GET request received at ${req.originalUrl}`);
     try {
         if (/^\d{6}$/.test(req.params.project_number)) {
@@ -54,24 +56,21 @@ router.get('/search-project/:project_number', verifyToken, (req, res) => {
         res.status(500).json({ error: err.message })
     }
 })
-router.get('/projects/:project_manager', verifyToken, (req, res) => {
-    console.log(`[${new Date().toISOString()}] 🔄 GET request received at ${req.originalUrl}`);
+
+// ###############
+// AUTH REQUIRED
+router.post('/update-projects', verifyToken, (req, res) => {
+    console.log(`[${new Date().toISOString()}] 📩 POST request received at ${req.originalUrl}`);
     try {
-        const project_manager = req.params.project_manager.toUpperCase()
-        if (/^[a-zA-Z]+$/.test(project_manager)) {
-            res.json(getProjectsByProjectManager(req.db, project_manager))
-        } else {
-            const err = new Error(`Project Manager "${req.params.project_manager}" is not valid`);
-            console.error(`Error: ${err}`)
-            res.status(500).json({ error: err.message })
-        }
+        const data = dataReadyForSQLite()
+        const insertedRows = insertProjects(req.db, data)
+        res.json({ message: `Inserted ${insertedRows} projects` })
     }
     catch (err) {
-        console.error(`Error fetching projects: ${err}`);
+        console.error('Error at POST-"/update-database": ', err)
         res.status(500).json({ error: err.message })
     }
 })
-
 
 
 export default (db) => {
