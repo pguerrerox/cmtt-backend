@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS managers (
     fullname TEXT UNIQUE,
     email TEXT UNIQUE,
     role TEXT,
-    isActive INTEGER
+    isActive INTEGER,
+    isAdmin INTEGER
 )`
 
 export default initManagersTable

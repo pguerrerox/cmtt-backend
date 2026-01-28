@@ -27,7 +27,8 @@ app.use((req, res, next) => {
 import projects from './routes/projects_Routes.js'
 import managers from './routes/managers_Routes.js'
 import settings from './routes/settings_Routes.js'
-app.use('/api', projects(db), managers(db), settings(db))
+import admins from './routes/admin_Routes.js'
+app.use('/api', projects(db), managers(db), settings(db), admins(db))
 
 import auth_Routes from './routes/auth_Routes.js'
 app.use('/auth', auth_Routes)
