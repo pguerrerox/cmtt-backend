@@ -28,8 +28,8 @@ import { insertProjects } from './services/projects_Serv.js'
 import dataReadyForSQLite from './helpers/excel_DataReadyForSQLite.js'
 insertProjects(db, dataReadyForSQLite())
 
-import { insertManagers } from './services/managers_Serv.js'
 import dataActiveManagers from './helpers/data_active_managers.js'
+// import { insertManagers } from './services/managers_Serv.js'
 // insertManagers(db, dataActiveManagers)
 
 export default db

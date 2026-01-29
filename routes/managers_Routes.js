@@ -1,10 +1,10 @@
 import express from 'express'
 import { verifyToken } from '../auth.js'
-import {
-    insertManagers,
-    getManagers,
-    updateManagers
-} from '../services/managers_Serv.js'
+// import {
+//     insertManagers,
+//     getManagers,
+//     updateManagers
+// } from '../services/managers_Serv.js'
 
 const router = express.Router()
 
