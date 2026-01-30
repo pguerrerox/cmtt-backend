@@ -1,3 +1,13 @@
+// methods I need here
+// - create new project
+// - modify existing project
+// - delete a project by project number
+// - get all projects
+// - get project by project number
+// - get projects by project manager
+
+
+
 export const insertProjects = (db, data) => { // insert all projects (no repeating existent) on the database from the excel operations schedule
     const stmt = db.prepare(`INSERT OR IGNORE INTO projects (
         project_number, project_description, customer_name, project_manager,
