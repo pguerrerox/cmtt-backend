@@ -1,7 +1,8 @@
 import express from 'express'
 import { verifyToken } from '../auth.js'
-import dataReadyForSQLite from '../helpers/excel_DataReadyForSQLite.js'
+// import dataReadyForSQLite from '../helpers/excel_DataReadyForSQLite.js'
 import {
+    createProject,
     insertProjects,
     getAllProjects,
     getProjectByProjectNumber,
@@ -9,6 +10,27 @@ import {
 } from '../services/projects_Serv.js'
 
 const router = express.Router()
+
+// POST
+router.post('/createProject', (req, res)=>{
+    try{
+        const result = createProject(req.db, req.body)
+        if(result.startsWith('Error')){
+            return res.status(409).json({error: result})
+        }
+        res.status(201).json({
+            message: `Project ${req.body.project_number} was created successfully`,
+            status: result
+        })
+    }
+    catch(err){
+        console.error(`Route Error: ${err.message}`);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+})
+
+
+
 
 // ###############
 // AUTH NOT REQUIRED

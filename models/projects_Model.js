@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS projects (
     project_number TEXT UNIQUE,
     project_description TEXT,
     customer_name TEXT,
-    project_manager TEXT,
+    manager_id INTEGER,
     kickoff_date_planned INTEGER,
     kickoff_date_act INTEGER,
     mih_date_planned INTEGER,
@@ -36,7 +36,8 @@ CREATE TABLE IF NOT EXISTS projects (
     ops_complete_date_planned INTEGER,
     ship_date_planned INTEGER,
     ship_date_act INTEGER,
-    status_notes TEXT
+    status_notes TEXT,
+    FOREIGN KEY (manager_id) REFERENCES managers(id) ON DELETE SET NULL
 )`
 
 export default initProjectsTable

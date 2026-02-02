@@ -1,5 +1,12 @@
 import express from 'express'
-import { createManager, updateManager, deleteManager } from '../services/managers_Serv.js'
+import { 
+    createManager, 
+    updateManager, 
+    deleteManager,
+    getAllManagers,
+    getManagerByName,
+    getManagerById
+} from '../services/managers_Serv.js'
 
 const router = express.Router()
 
@@ -39,7 +46,7 @@ router.put('/admin/updateManager/:id', (req, res) => {
 router.delete('/admin/deleteManager/:id', (req, res) => {
     const { id } = req.params;
     try {
-        const result = deleteManager(req.db, id);
+        const result = deleteManager(req.db, id);    
         if (result.startsWith('Error')) {
             return res.status(404).json({ error: result })
         }
@@ -54,13 +61,40 @@ router.delete('/admin/deleteManager/:id', (req, res) => {
 // GET
 router.get('/admin/managers', (req, res) => {
     try {
-        const managers = getManagers(req.db);
+        const managers = getAllManagers(req.db);
         res.json(managers);
     } catch (err) {
         console.error(`Fetch Error: ${err}`);
         res.status(500).json({ error: "Failed to retrieve managers" });
     }
 });
+router.get('/admin/manager/name/:name', (req, res) => {
+    const { name } = req.params;
+    try {
+        const manager = getManagerByName(req.db, name)
+        if(!manager){
+            return res.status(404).json({error: "Manager not found"})
+        }
+        res.json(manager)
+    }
+    catch (err) {
+        res.status(500).json({error: err.message})
+    }
+})
+router.get('/admin/manager/id/:id', (req, res)=>{
+        const { id } = req.params;
+    try {
+        const manager = getManagerById(req.db, id)
+        if(!manager){
+            return res.status(404).json({error: "Manager not found"})
+        }
+        res.json(manager)
+    }
+    catch (err) {
+        res.status(500).json({error: err.message})
+    }
+})
+
 
 export default (db) => {
     return router;

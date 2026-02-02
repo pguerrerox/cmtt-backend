@@ -9,6 +9,8 @@
  * - updateManager: Modifies existing Project Manager data by ID
  * - deleteManager: Removes a Project Manager from the system by ID
  * - getAllManagers: Retrieves the full list of PMs
+ * - getManagerByName: Retrieves one Project Manager by its Name
+ * - getManagerById: Retreives one Project Manager by its ID
  */
 
 export const createManager = (db, data) => {
@@ -64,25 +66,10 @@ export const getAllManagers = (db) => {
     return db.prepare(`SELECT * FROM managers ORDER BY fullname ASC`).all();
 }
 
-// export const insertManagers = (db, data) => { // query all managers without duplicates from projects table, add a new {key:value} to each one, and insert them into the managers table, return the number of newly inserted managers
-//     // const data = db.prepare(`SELECT DISTINCT project_manager FROM projects;`).all()
-//     const stmt = db.prepare(`INSERT OR IGNORE INTO managers ( name, fullname, email, role,  isActive) VALUES (?,?,?,?,?)`)
+export const getManagerByName = (db, name) => {
+    return db.prepare(`SELECT * FROM managers WHERE name = ?`).get(name);
+}
 
-//     let counter = 0
-//     data.forEach(e => {
-//         const result = stmt.run(
-//             e.name,
-//             e.fullname,
-//             e.email,
-//             e.role,
-//             e.isActive
-//         )
-//         counter += result.changes
-//     })
-//     console.log(`Project Managers inserted/updated: ${counter}`);
-//     return counter
-// }
-
-// export const updateManagers = (db, isActive, project_manager) => {
-//     return db.prepare(`UPDATE managers SET isActive = ? WHERE project_manager = ?`).all(isActive, project_manager)
-// }
+export const getManagerById = (db, id) => {
+    return db.prepare(`SELECT * FROM managers WHERE id =?`).get(id);
+}
