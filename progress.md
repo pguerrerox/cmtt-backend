@@ -12,3 +12,8 @@
 ### Continue with the methods for the "admin_routes"
 - Manager: the needed methods are defined in the managers_Serv file
 - Admin Routes: the needed routes are defined in the admin_Routes file
+- Projects services and routes ready:
+-- createProject: 
+-- modifyProject:
+-- deleteProject:
+-- getAllprojects:

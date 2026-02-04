@@ -3,6 +3,7 @@ Code for the backend of CMTT
 
 # CHANGELOG
 Alpha
+0.0.6 - some projects services implemented and their respective routes.
 0.0.5 - working on projects_services and project_routes
 0.0.4 - planning at home
 0.0.3 - completed managers_services and admin_routes related to managers

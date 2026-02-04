@@ -6,140 +6,118 @@
  * 
  * Methods:
  * - createProject: 
+ * - modifyProject:
+ * - deleteProject:
+// - getAllprojects:
 */
 
 // methods needed here
-// - create new project
-// - modify existing project
-// - delete a project by project number
-// - get all projects
 // - get project by project number
 // - get projects by project manager
+// - get projects by customer
 
 export const createProject = (db, data) => {
-    const stmt = db.prepare(`INSERT OR IGNORE INTO projects (
-        project_number, project_description, customer_name, manager_id,
-        kickoff_date_planned, kickoff_date_act, mih_date_planned, mih_date_act,
-        inspection_date_planned, inspection_date_act, process_planning_date_planned,
-        process_planning_date_act, milton_date_planned, pih_date_planned,
-        pih_date_act, mfg_date_planned, mfg_date_act, rih_date_planned,
-        rih_date_act, hr_assy_date_planned, assy_date_planned, assy_date_act,
-        test_date_planned, test_date_act, pp_recut_date_planned, pp_recut_date_act,
-        recut_mfg_date_planned, post_recut_test_date_planned, dev_test_date_planned,
-        machine_comt_date_planned, system_test_planned, system_test_act,
-        ops_complete_date_planned, ship_date_planned, ship_date_act, status_notes
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-    )
-    const info = stmt.run (
-        data.project_number,
-        data.project_description,
-        data.customer_name,
-        data.manager_id,
-        data.kickoff_date_planned,
-        data.kickoff_date_act,
-        data.mih_date_planned,
-        data.mih_date_act,
-        data.inspection_date_planned,
-        data.inspection_date_act,
-        data.process_planning_date_planned,
-        data.process_planning_date_act,
-        data.milton_date_planned,
-        data.pih_date_planned,
-        data.pih_date_act,
-        data.mfg_date_planned,
-        data.mfg_date_act,
-        data.rih_date_planned,
-        data.rih_date_act,
-        data.hr_assy_date_planned,
-        data.assy_date_planned,
-        data.assy_date_act,
-        data.test_date_planned,
-        data.test_date_act,
-        data.pp_recut_date_planned,
-        data.pp_recut_date_act,
-        data.recut_mfg_date_planned,
-        data.post_recut_test_date_planned,
-        data.dev_test_date_planned,
-        data.machine_comt_date_planned,
-        data.system_test_planned,
-        data.system_test_act,
-        data.ops_complete_date_planned,
-        data.ship_date_planned,
-        data.ship_date_act,
-        data.status_notes
-    )
-    return info.changes > 0 ? 'OP: completed' : 'Error: Project already exist';
+    const keys = Object.keys(data);
+    if (keys.length === 0) return 'Error: No data provided';
+
+    const columns = keys.join(', ');
+    const placeholders = keys.map((key) => `:${key}`).join(', ');
+    const sqlStatement = `INSERT OR IGNORE INTO projects (${columns}) VALUES (${placeholders})`;
+
+    try {
+        const stmt = db.prepare(sqlStatement);
+        const info = stmt.run(data);
+        return info.changes > 0 ? 'OP: completed' : 'Error: Project already exist';
+    }
+    catch (err) {
+        return `Error: ${err.message}`;
+    }
+}
+
+export const modifyProject = (db, data, project_number) => {
+    const keys = Object.keys(data);
+    if (keys.length === 0) return 'Error: No data provided';
+
+    const stringStatement = keys.map((key) => `${key} = :${key}`).join(', ');
+
+    try {
+        const stmt = db.prepare(`UPDATE projects SET ${stringStatement} WHERE project_number = :project_number`);
+        const info = stmt.run({ ...data, project_number });
+        return info.changes > 0 ? 'OP: completed' : 'Error: Project not found';
+    }
+    catch (err) {
+        return `Error: ${err.message}`;
+    }
+}
+
+export const deleteProject = (db, project_number) => {
+    try {
+        const stmt = db.prepare(`DELETE FROM projects WHERE project_number = ?`);
+        const info = stmt.run(project_number);
+        return info.changes > 0 ? 'OP: completed' : 'Error: Project not found';
+    }
+    catch (err) {
+        return `Error: ${err.message}`;
+    }
+}
+
+export const getAllProjects = (db) => {
+    try {
+        const sql = `
+            SELECT projects.*, managers.name AS manager_name
+            FROM projects 
+            LEFT JOIN managers ON projects.manager_id = managers.id;
+        `;
+
+        const stmt = db.prepare(sql);
+        return stmt.all();
+    }
+    catch (err) {
+        return `Error: ${err.message}`;
+    }
+}
+
+export const getProjectsByManager = (db, manager_id) => {
+    try {
+        const stmt = db.prepare(`SELECT * FROM projects WHERE manager_id = ?`);
+        return stmt.all(manager_id);
+    } catch (err) {
+        return `Error: ${err.message}`;
+    }
+}
+
+export const getProjectsByCustomer = (db, customer_name) => {
+    try {
+        const stmt = db.prepare(`SELECT * FROM projects WHERE customer_name = ?`);
+        const results = stmt.all(customer_name);
+        return results.length > 0 ? results : 'Error: No projects found for this customer';
+    }
+    catch (err) {
+        return `Error: ${err.message}`;
+    }
+}
+
+export const getProjectsByNumber = (db, project_number) => {
+    try {
+        const sql = `SELECT projects.*, managers.name AS manager_name
+                     FROM projects 
+                     LEFT JOIN managers ON projects.manager_id = managers.id
+                     WHERE project_number = ?;`;
+        const stmt = db.prepare(`
+            SELECT projects.*, managers.name AS manager_name
+            FROM projects WHERE project_number = ?;`);
+        const results = stmt.all(project_number);
+        return results.length > 0 ? results : 'Error: Project not found';
+    }
+    catch (err) {
+        return `Error: ${err.message}`;
+    }
 }
 
 
-export const insertProjects = (db, data) => { // insert all projects (no repeating existent) on the database from the excel operations schedule
-    const stmt = db.prepare(`INSERT OR IGNORE INTO projects (
-        project_number, project_description, customer_name, project_manager,
-        kickoff_date_planned, kickoff_date_act, mih_date_planned, mih_date_act,
-        inspection_date_planned, inspection_date_act, process_planning_date_planned,
-        process_planning_date_act, milton_date_planned, pih_date_planned,
-        pih_date_act, mfg_date_planned, mfg_date_act, rih_date_planned,
-        rih_date_act, hr_assy_date_planned, assy_date_planned, assy_date_act,
-        test_date_planned, test_date_act, pp_recut_date_planned, pp_recut_date_act,
-        recut_mfg_date_planned, post_recut_test_date_planned, dev_test_date_planned,
-        machine_comt_date_planned, system_test_planned, system_test_act,
-        ops_complete_date_planned, ship_date_planned, ship_date_act, status_notes
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-
-    let newlyInserted = 0
-    const batchInsert = db.transaction((projects) => {
-        for (const elem of projects) {
-            const result = stmt.run(
-                elem.project_number,
-                elem.project_description,
-                elem.customer_name,
-                elem.project_manager,
-                elem.kickoff_date_planned,
-                elem.kickoff_date_act,
-                elem.mih_date_planned,
-                elem.mih_date_act,
-                elem.inspection_date_planned,
-                elem.inspection_date_act,
-                elem.process_planning_date_planned,
-                elem.process_planning_date_act,
-                elem.milton_date_planned,
-                elem.pih_date_planned,
-                elem.pih_date_act,
-                elem.mfg_date_planned,
-                elem.mfg_date_act,
-                elem.rih_date_planned,
-                elem.rih_date_act,
-                elem.hr_assy_date_planned,
-                elem.assy_date_planned,
-                elem.assy_date_act,
-                elem.test_date_planned,
-                elem.test_date_act,
-                elem.pp_recut_date_planned,
-                elem.pp_recut_date_act,
-                elem.recut_mfg_date_planned,
-                elem.post_recut_test_date_planned,
-                elem.dev_test_date_planned,
-                elem.machine_comt_date_planned,
-                elem.system_test_planned,
-                elem.system_test_act,
-                elem.ops_complete_date_planned,
-                elem.ship_date_planned,
-                elem.ship_date_act,
-                elem.status_notes
-            )
-            newlyInserted += result.changes
-        }
-    })
-    batchInsert(data)
-    console.log(`Projects inserted/updated: ${newlyInserted}`);
-    return newlyInserted
-}
-export const getAllProjects = (db) => { // return all projects on the database
-    return db.prepare(`SELECT * FROM projects;`).all()
-}
-export const getProjectByProjectNumber = (db, project_number) => { // return one project for a given a project number - 6 digit number
-    return db.prepare(`SELECT * FROM projects WHERE project_number = ?;`).get(project_number)
-}
-export const getProjectsByProjectManager = (db, project_manager) => { // return all projects for a given project manager name - only letters
-    return db.prepare(`SELECT * FROM projects WHERE project_manager = ?`).all(project_manager)
-}
+// export const getProjectByProjectNumber = (db, project_number) => { // return one project for a given a project number - 6 digit number
+//     return db.prepare(`SELECT * FROM projects WHERE project_number = ?;`).get(project_number)
+// }
+// export const getProjectsByProjectManager = (db, project_manager) => { // return all projects for a given project manager name - only letters
+//     return db.prepare(`SELECT * FROM projects WHERE project_manager = ?`).all(project_manager)
+// }
