@@ -1,5 +1,5 @@
 /**
- * MANAGERS DATABASE SERVICES
+ * MANAGERS DATABASE REPOSITORIES
  * 
  * Handles all CRUD operations for the 'managers' table.
  * Dependencies: better-sqlite3

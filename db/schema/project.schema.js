@@ -1,4 +1,4 @@
-const initProjectsTable = `
+export default `
 CREATE TABLE IF NOT EXISTS projects (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     project_number TEXT UNIQUE,
@@ -39,5 +39,3 @@ CREATE TABLE IF NOT EXISTS projects (
     status_notes TEXT,
     FOREIGN KEY (manager_id) REFERENCES managers(id) ON DELETE SET NULL
 )`
-
-export default initProjectsTable

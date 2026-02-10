@@ -1,13 +1,10 @@
 import express from 'express'
-import { verifyToken } from '../auth.js'
-// import dataReadyForSQLite from '../helpers/excel_DataReadyForSQLite.js'
 import {
     createProject,
-    insertProjects,
     getAllProjects,
     getProjectByProjectNumber,
     getProjectsByProjectManager,
-} from '../services/projects_Serv.js'
+} from '../repositories/projects.repo.js'
 
 const router = express.Router()
 
@@ -29,11 +26,7 @@ router.post('/createProject', (req, res)=>{
     }
 })
 
-
-
-
-// ###############
-// AUTH NOT REQUIRED
+// GET
 router.get('/projects', (req, res) => {
     console.log(`[${new Date().toISOString()}] 🔄 GET request received at ${req.originalUrl}`);
     try {
@@ -79,22 +72,4 @@ router.get('/search-project/:project_number', (req, res) => {
     }
 })
 
-// ###############
-// AUTH REQUIRED
-router.post('/update-projects', verifyToken, (req, res) => {
-    console.log(`[${new Date().toISOString()}] 📩 POST request received at ${req.originalUrl}`);
-    try {
-        const data = dataReadyForSQLite()
-        const insertedRows = insertProjects(req.db, data)
-        res.json({ message: `Inserted ${insertedRows} projects` })
-    }
-    catch (err) {
-        console.error('Error at POST-"/update-database": ', err)
-        res.status(500).json({ error: err.message })
-    }
-})
-
-
-export default (db) => {
-    return router;
-};
+export default router;

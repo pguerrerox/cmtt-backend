@@ -6,7 +6,7 @@ import {
     getAllManagers,
     getManagerByName,
     getManagerById
-} from '../services/managers_Serv.js'
+} from '../repositories/managers.repo.js'
 
 const router = express.Router()
 
@@ -95,7 +95,4 @@ router.get('/admin/manager/id/:id', (req, res)=>{
     }
 })
 
-
-export default (db) => {
-    return router;
-};
+export default router;

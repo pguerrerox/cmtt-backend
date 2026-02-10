@@ -1,4 +1,4 @@
-const initManagersTable = `
+export default `
 CREATE TABLE IF NOT EXISTS managers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
@@ -8,5 +8,3 @@ CREATE TABLE IF NOT EXISTS managers (
     isActive INTEGER,
     isAdmin INTEGER
 )`
-
-export default initManagersTable

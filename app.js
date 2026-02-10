@@ -1,22 +1,12 @@
-import dotenv from 'dotenv'
 import express from 'express'
 import cookieParser from 'cookie-parser'
-import cors from 'cors'
-import db from './db.js'
+import db from './db/db.js'
 
-// Load environment variables
-dotenv.config()
-
-// Initialize Express aspp
+// Initialize Express app
 const app = express()
 
 // Middlewares
 app.use(express.json())
-app.use(cors())
-// {
-  // origin: ['http://localhost:5173', 'http://10.0.32.*:5173'],
-  // credentials: true
-// }
 app.use(cookieParser())
 app.use((req, res, next) => {
   req.db = db
@@ -24,14 +14,9 @@ app.use((req, res, next) => {
 })
 
 // Declaring routes
-import admins from './routes/admin_Routes.js'
-import projects from './routes/projects_Routes.js'
-import managers from './routes/managers_Routes.js'
-import settings from './routes/settings_Routes.js'
-app.use('/api', projects(db), managers(db), settings(db), admins(db))
-
-import auth_Routes from './routes/auth_Routes.js'
-app.use('/auth', auth_Routes)
+import admins from './routes/admin.routes.js'
+import projects from './routes/projects.routes.js'
+app.use('/api', admins, projects)
 
 // Start the server
 const PORT = process.env.PORT || 5000
