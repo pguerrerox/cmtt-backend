@@ -11,7 +11,7 @@
  * - getAllManagers: Retrieves the full list of PMs
  * - getManagerByName: Retrieves one Project Manager by its Name
  * - getManagerById: Retreives one Project Manager by its ID
- */
+**/
 
 export const createManager = (db, data) => {
     // Create in the database a new Project Manager
@@ -26,7 +26,9 @@ export const createManager = (db, data) => {
         data.isActive,
         data.isAdmin
     )
-    return info.changes > 0 ? 'OP: completed' : 'Error: Manager already exist';
+    return info.changes > 0
+        ? { ok: true, message: 'manager created' }
+        : { ok: false, error: 'manager already exists' };
 }
 
 export const updateManager = (db, id, data) => {
@@ -50,7 +52,9 @@ export const updateManager = (db, id, data) => {
         data.isAdmin,
         id // The ID for the WHERE clause
     );
-    return info.changes > 0 ? 'OP: updated' : 'Error: Manager not found';
+    return info.changes > 0
+        ? { ok: true, message: 'manager updated' }
+        : { ok: false, error: 'manager not found' };
 }
 
 export const deleteManager = (db, id) => {
@@ -59,17 +63,26 @@ export const deleteManager = (db, id) => {
         DELETE FROM managers WHERE id = ?
     `);
     const info = stmt.run(id)
-    return info.changes > 0 ? 'OP: deleted' : 'Error: Manager not found';
+    return info.changes > 0
+        ? { ok: true, message: 'manager deleted' }
+        : { ok: false, error: 'manager not found' };
 }
 
 export const getAllManagers = (db) => {
-    return db.prepare(`SELECT * FROM managers ORDER BY fullname ASC`).all();
+    const managers = db.prepare(`SELECT * FROM managers ORDER BY fullname ASC`).all();
+    return { ok: true, data: managers };
 }
 
 export const getManagerByName = (db, name) => {
-    return db.prepare(`SELECT * FROM managers WHERE name = ?`).get(name);
+    const manager = db.prepare(`SELECT * FROM managers WHERE name = ?`).get(name);
+    return manager
+        ? { ok: true, data: manager }
+        : { ok: false, error: 'manager not found' };
 }
 
 export const getManagerById = (db, id) => {
-    return db.prepare(`SELECT * FROM managers WHERE id =?`).get(id);
+    const manager = db.prepare(`SELECT * FROM managers WHERE id =?`).get(id);
+    return manager
+        ? { ok: true, data: manager }
+        : { ok: false, error: 'manager not found' };
 }

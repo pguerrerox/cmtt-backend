@@ -1,5 +1,5 @@
 /**
- * PROJECTS DATABASE SERVICES
+ * PROJECTS DATABASE REPOSITORIES
  * 
  * Handles all CRUD operations for the 'projects' table.
  * Dependencies: better-sqlite3
@@ -8,16 +8,12 @@
  * - createProject: 
  * - modifyProject:
  * - deleteProject:
-// - getAllprojects:
- * - get all projects
+ * - getAllprojects:
+ *
  * - get project by project number
  * - get projects by project manager
+ * - get projects by customer
 */
-
-// methods needed here
-// - get project by project number
-// - get projects by project manager
-// - get projects by customer
 
 export const createProject = (db, data) => {
     const keys = Object.keys(data);

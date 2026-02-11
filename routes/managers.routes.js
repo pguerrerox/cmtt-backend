@@ -1,51 +1,66 @@
 import express from 'express'
-// import {
-//     insertManagers,
-//     getManagers,
-//     updateManagers
-// } from '../services/managers_Serv.js'
+import {
+    getAllManagers,
+    getManagerByName,
+    getManagerById,
+} from '../repositories/managers.repo.js'
+
+/**
+ * MANAGER ROUTES
+ *
+ * Handles manager read-only endpoints for general usage.
+ * Expects `req.db` to contain an initialized better-sqlite3 connection.
+ *
+ * Endpoints:
+ * - GET /managers: Retrieves all managers
+ * - GET /manager/name/:name: Retrieves one manager by name
+ * - GET /manager/id/:id: Retrieves one manager by ID
+**/
 
 const router = express.Router()
 
-// GET
-router.get('/getManagers', (req, res) => {
-    console.log(`[${new Date().toISOString()}] 🔄 GET request received at ${req.originalUrl}`);
+router.get('/managers', (req, res) => {
     try {
-        const data = getManagers(req.db)
-        res.json(data)
+        const result = getAllManagers(req.db)
+        if (!result.ok){
+            return res.status(500).json({ error: result.error })
+        }
+        res.json(result.data);
     }
     catch (err) {
-        console.error(`Error on ${req.originalUrl} - ${err}`);
+        console.error(`Fetch Error: ${err}`);
+        res.status(500).json({ error: "Failed to retrieve managers" });
+    }
+})
+
+router.get('/manager/name/:name',(req, res) =>{
+    const { name } = req.params
+    try {
+        const result = getManagerByName(req.db, name)
+        if (!result.ok) {
+            return res.status(404).json({ error: result.error })
+        }
+        res.json(result.data)
+    }
+    catch (err) {
+        console.error(`Fetch Error: ${err}`)
         res.status(500).json({ error: err.message })
     }
 })
 
-
-// POST
-router.post('/updateManagers', (req, res)=>{
-    console.log(`[${new Date().toISOString()}] 📩 POST request received at ${req.originalUrl}`);
+router.get('/manager/id/:id', (req, res) => {
+    const { id } = req.params
     try {
-        const updatedManagers = updateManagers(req.db, )
-        res.json({ message: `Inserted ${managersInserted} managers` })
+        const result = getManagerById(req.db, id)
+        if (!result.ok) {
+            return res.status(404).json({ error: result.error })
+        }
+        res.json(result.data)
     }
     catch (err) {
-        console.error('Error at POST-"/update-managers": ', err);
-        res.status(500).json({ error: err.message })
-    }
-})
-router.post('/insertmanagers', (req, res) => {
-    console.log(`[${new Date().toISOString()}] 📩 POST request received at ${req.originalUrl}`);
-    try {
-        const managersInserted = insertManagers(req.db)
-        res.json({ message: `Inserted ${managersInserted} managers` })
-     }
-    catch (err) {
-        console.error('Error at POST-"/update-managers": ', err);
+        console.error(`Fetch Error: ${err}`)
         res.status(500).json({ error: err.message })
     }
 })
 
-
-export default (db) => {
-    return router;
-};
+export default router;

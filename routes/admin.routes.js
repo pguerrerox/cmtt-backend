@@ -1,24 +1,38 @@
 import express from 'express'
-import { 
-    createManager, 
-    updateManager, 
+import {
+    createManager,
+    updateManager,
     deleteManager,
     getAllManagers,
     getManagerByName,
     getManagerById
 } from '../repositories/managers.repo.js'
 
+/**
+ * ADMIN ROUTES - MANAGERS
+ *
+ * Handles manager CRUD endpoints for admin usage.
+ * Expects `req.db` to contain an initialized better-sqlite3 connection.
+ *
+ * Endpoints:
+ * - POST /admin/createManager: Creates a new manager
+ * - PUT /admin/updateManager/:id: Updates an existing manager by ID (full update)
+ * - DELETE /admin/deleteManager/:id: Deletes a manager by ID
+ * - GET /admin/managers: Retrieves all managers
+ * - GET /admin/manager/name/:name: Retrieves one manager by name
+ * - GET /admin/manager/id/:id: Retrieves one manager by ID
+**/
+
 const router = express.Router()
 
-// POST
 router.post('/admin/createManager', (req, res) => {
-    const {fullname} = req.body
+    const { fullname } = req.body
     try {
         const result = createManager(req.db, req.body);
-        if (result.startsWith('Error')){
-            return res.status(409).json({error: result})
+        if (!result.ok) {
+            return res.status(409).json({ error: result.error })
         }
-        res.json({message: `Manager ${fullname} was added successfully`})
+        res.status(201).json({ message: `Manager ${fullname} was added successfully` })
     }
     catch (err) {
         console.error(`Create Error: ${err}`)
@@ -26,15 +40,14 @@ router.post('/admin/createManager', (req, res) => {
     }
 })
 
-// PUT
 router.put('/admin/updateManager/:id', (req, res) => {
     const { id } = req.params
     try {
         const result = updateManager(req.db, id, req.body);
-        if (result.startsWith('Error')) {
-            return res.status(404).json({ error: result })
+        if (!result.ok) {
+            return res.status(404).json({ error: result.error })
         }
-        res.status(201).json({ message: `Manager ${id} was updated successfully.` })
+        res.status(200).json({ message: `Manager ${id} was updated successfully.` })
     }
     catch (err) {
         console.error(`Update Error: ${err}`)
@@ -42,13 +55,12 @@ router.put('/admin/updateManager/:id', (req, res) => {
     }
 })
 
-// DELETE
 router.delete('/admin/deleteManager/:id', (req, res) => {
     const { id } = req.params;
     try {
-        const result = deleteManager(req.db, id);    
-        if (result.startsWith('Error')) {
-            return res.status(404).json({ error: result })
+        const result = deleteManager(req.db, id);
+        if (!result.ok) {
+            return res.status(404).json({ error: result.error })
         }
         res.json({ message: `Manager ${id} has been removed` })
     }
@@ -58,40 +70,46 @@ router.delete('/admin/deleteManager/:id', (req, res) => {
     }
 })
 
-// GET
 router.get('/admin/managers', (req, res) => {
     try {
-        const managers = getAllManagers(req.db);
-        res.json(managers);
+        const result = getAllManagers(req.db);
+        if (!result.ok) {
+            return res.status(500).json({ error: result.error })
+        }
+        res.json(result.data);
     } catch (err) {
         console.error(`Fetch Error: ${err}`);
         res.status(500).json({ error: "Failed to retrieve managers" });
     }
 });
+
 router.get('/admin/manager/name/:name', (req, res) => {
     const { name } = req.params;
     try {
-        const manager = getManagerByName(req.db, name)
-        if(!manager){
-            return res.status(404).json({error: "Manager not found"})
+        const result = getManagerByName(req.db, name)
+        if (!result.ok) {
+            return res.status(404).json({ error: result.error })
         }
-        res.json(manager)
+        res.json(result.data)
     }
     catch (err) {
-        res.status(500).json({error: err.message})
+        console.error(`Fetch Error: ${err}`);
+        res.status(500).json({ error: err.message })
     }
 })
-router.get('/admin/manager/id/:id', (req, res)=>{
-        const { id } = req.params;
+
+router.get('/admin/manager/id/:id', (req, res) => {
+    const { id } = req.params;
     try {
-        const manager = getManagerById(req.db, id)
-        if(!manager){
-            return res.status(404).json({error: "Manager not found"})
+        const result = getManagerById(req.db, id)
+        if (!result.ok) {
+            return res.status(404).json({ error: result.error })
         }
-        res.json(manager)
+        res.json(result.data)
     }
     catch (err) {
-        res.status(500).json({error: err.message})
+        console.error(`Fetch Error: ${err}`);
+        res.status(500).json({ error: err.message })
     }
 })
 
