@@ -1,5 +1,5 @@
-console.log("start");
-import ExcelToSQLite from './ExcelToSQLite.js';
+console.log("start test");
+import ExcelToSQLite from './excel_import/index.js';
 ExcelToSQLite()
 
 

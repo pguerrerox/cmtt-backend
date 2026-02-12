@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-02-12
+
+### Added
+- Added `TODO.md` project task tracker.
+- Added new Excel import module structure under `helpers/excel_import/`:
+  - `index.js` (pipeline entrypoint)
+  - `config.js` (headers/output shape config)
+  - `transform.js` (row-group transformation)
+  - `normalize.js` (date normalization)
+
+### Changed
+- Refactored Excel ingestion flow to use the new `helpers/excel_import` structure.
+- Updated helper test runner to import from `helpers/excel_import/index.js`.
+- Moved Excel source file location to `_ref-external-data/testData.xls`.
+- Updated XLSX dependency source to SheetJS CDN tarball (`0.20.3`) to resolve file access/runtime compatibility.
+
+### Removed
+- Removed legacy Excel helper files:
+  - `helpers/excel_DataReadyForSQLite.js`
+  - `helpers/excel_CleanedData.js`
+  - `helpers/excel_DateConverter.js`
+  - `helpers/excel_Range.js`
+- Removed deprecated helper dataset `helpers/data_active_managers.js`.
+
 ## [0.2.0] - 2026-02-12
 
 ### Added
