@@ -1,3 +1,5 @@
+import allowed_fields from '../helpers/_ALLOWED_MANAGER_FIELDS.js'
+
 /**
  * MANAGERS DATABASE REPOSITORIES
  * 
@@ -14,75 +16,154 @@
 **/
 
 export const createManager = (db, data) => {
-    // Create in the database a new Project Manager
-    const stmt = db.prepare(`
-        INSERT OR IGNORE INTO managers (name, fullname, email, role, isActive, isAdmin) VALUES (?,?,?,?,?,?)
-    `)
-    const info = stmt.run(
-        data.name,
-        data.fullname,
-        data.email,
-        data.role,
-        data.isActive,
-        data.isAdmin
-    )
-    return info.changes > 0
-        ? { ok: true, message: 'manager created' }
-        : { ok: false, error: 'manager already exists' };
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+        return { ok: false, error: 'invalid payload' };
+    }
+
+    const keys = Object.keys(data);
+    if (keys.length === 0) return { ok: false, error: 'no data provided' };
+
+    const droppedKeys = keys.filter((key) => !allowed_fields.includes(key));
+    if (droppedKeys.length > 0) {
+        return {
+            ok: false,
+            error: `invalid fields: ${droppedKeys.join(', ')}`,
+            droppedKeys
+        };
+    }
+
+    const columns = keys.join(', ');
+    const placeholders = keys.map((key) => `:${key}`).join(', ');
+    const sql = `INSERT INTO managers (${columns}) VALUES (${placeholders})`;
+
+    try {
+        const stmt = db.prepare(sql);
+        stmt.run(data);
+        return { ok: true, message: 'manager created' };
+    }
+    catch (err) {
+        if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+            return { ok: false, error: 'manager already exists' };
+        }
+
+        if (err.code && err.code.startsWith('SQLITE_CONSTRAINT')) {
+            return { ok: false, error: `constraint error: ${err.message}` };
+        }
+
+        return { ok: false, error: `database error: ${err.message}` };
+    }
 }
 
 export const updateManager = (db, id, data) => {
-    // Modify an existing and selected Project Manager
-    const stmt = db.prepare(`
-        UPDATE managers 
-        SET name = ?, 
-            fullname = ?, 
-            email = ?, 
-            role = ?, 
-            isActive = ?, 
-            isAdmin = ? 
-        WHERE id = ?
-    `);
-    const info = stmt.run(
-        data.name,
-        data.fullname,
-        data.email,
-        data.role,
-        data.isActive,
-        data.isAdmin,
-        id // The ID for the WHERE clause
-    );
-    return info.changes > 0
-        ? { ok: true, message: 'manager updated' }
-        : { ok: false, error: 'manager not found' };
+    if (typeof id === 'string' && id.trim().length === 0) {
+        return { ok: false, error: 'id is required' };
+    }
+    if (!id) {
+        return { ok: false, error: 'id is required' };
+    }
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+        return { ok: false, error: 'invalid payload' };
+    }
+
+    const keys = Object.keys(data);
+    if (keys.length === 0) return { ok: false, error: 'no data provided' };
+
+    const droppedKeys = keys.filter((key) => !allowed_fields.includes(key));
+    if (droppedKeys.length > 0) {
+        return {
+            ok: false,
+            error: `invalid fields: ${droppedKeys.join(', ')}`,
+            droppedKeys
+        };
+    }
+
+    const setClause = keys.map((key) => `${key} = :${key}`).join(', ');
+    const sql = `UPDATE managers SET ${setClause} WHERE id = :id`;
+
+    try {
+        const stmt = db.prepare(sql);
+        const info = stmt.run({ ...data, id });
+        return info.changes > 0
+            ? { ok: true, message: 'manager updated' }
+            : { ok: false, error: 'manager not found' };
+    }
+    catch (err) {
+        if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+            return { ok: false, error: 'manager already exists' };
+        }
+
+        if (err.code && err.code.startsWith('SQLITE_CONSTRAINT')) {
+            return { ok: false, error: `constraint error: ${err.message}` };
+        }
+
+        return { ok: false, error: `database error: ${err.message}` };
+    }
 }
 
 export const deleteManager = (db, id) => {
-    // Delete an existing Project Manager
-    const stmt = db.prepare(`
-        DELETE FROM managers WHERE id = ?
-    `);
-    const info = stmt.run(id)
-    return info.changes > 0
-        ? { ok: true, message: 'manager deleted' }
-        : { ok: false, error: 'manager not found' };
+    if (typeof id === 'string' && id.trim().length === 0) {
+        return { ok: false, error: 'id is required' };
+    }
+    if (!id) {
+        return { ok: false, error: 'id is required' };
+    }
+
+    try {
+        const stmt = db.prepare(`DELETE FROM managers WHERE id = ?`);
+        const info = stmt.run(id);
+        return info.changes > 0
+            ? { ok: true, message: 'manager deleted' }
+            : { ok: false, error: 'manager not found' };
+    }
+    catch (err) {
+        return { ok: false, error: `database error: ${err.message}` };
+    }
 }
 
 export const getAllManagers = (db) => {
-    const managers = db.prepare(`SELECT * FROM managers ORDER BY fullname ASC`).all();
-    return { ok: true, data: managers };
+    try {
+        const managers = db.prepare(`SELECT * FROM managers ORDER BY fullname ASC`).all();
+        return { ok: true, data: managers };
+    }
+    catch (err) {
+        return { ok: false, error: `database error: ${err.message}` };
+    }
 }
 
 export const getManagerByName = (db, name) => {
-    const manager = db.prepare(`SELECT * FROM managers WHERE name = ?`).get(name);
-    return manager
-        ? { ok: true, data: manager }
-        : { ok: false, error: 'manager not found' };
+    if (typeof name === 'string' && name.trim().length === 0) {
+        return { ok: false, error: 'name is required' };
+    }
+    if (!name) {
+        return { ok: false, error: 'name is required' };
+    }
+
+    try {
+        const manager = db.prepare(`SELECT * FROM managers WHERE name = ?`).get(name);
+        return manager
+            ? { ok: true, data: manager }
+            : { ok: false, error: 'manager not found' };
+    }
+    catch (err) {
+        return { ok: false, error: `database error: ${err.message}` };
+    }
 }
 
 export const getManagerById = (db, id) => {
-    const manager = db.prepare(`SELECT * FROM managers WHERE id =?`).get(id);
-    return manager
-        ? { ok: true, data: manager }
-        : { ok: false, error: 'manager not found' };
+    if (typeof id === 'string' && id.trim().length === 0) {
+        return { ok: false, error: 'id is required' };
+    }
+    if (!id) {
+        return { ok: false, error: 'id is required' };
+    }
+
+    try {
+        const manager = db.prepare(`SELECT * FROM managers WHERE id =?`).get(id);
+        return manager
+            ? { ok: true, data: manager }
+            : { ok: false, error: 'manager not found' };
+    }
+    catch (err) {
+        return { ok: false, error: `database error: ${err.message}` };
+    }
 }

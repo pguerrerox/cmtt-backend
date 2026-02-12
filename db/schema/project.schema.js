@@ -1,7 +1,7 @@
 export default `
 CREATE TABLE IF NOT EXISTS projects (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    project_number TEXT UNIQUE,
+    project_number TEXT UNIQUE NOT NULL,
     project_description TEXT,
     customer_name TEXT,
     manager_id INTEGER,

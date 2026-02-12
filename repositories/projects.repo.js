@@ -1,3 +1,5 @@
+import allowed_fields from '../helpers/_ALLOWED_PROJECT_FIELDS.js'
+
 /**
  * PROJECTS DATABASE REPOSITORIES
  * 
@@ -5,58 +7,127 @@
  * Dependencies: better-sqlite3
  * 
  * Methods:
- * - createProject: 
- * - modifyProject:
- * - deleteProject:
- * - getAllprojects:
- *
- * - get project by project number
- * - get projects by project manager
- * - get projects by customer
-*/
+ * - createProject: Inserts a new project (validates payload, required fields, and allowed keys)
+ * - modifyProject: Updates an existing project by project_number (validates payload and allowed keys)
+ * - deleteProject: Removes a project by project_number
+ * - getAllProjects: Retrieves all projects with manager_name via LEFT JOIN
+ * - getProjectsByNumber: Retrieves one project by project_number
+ * - getProjectsByManager: Retrieves all projects for a given manager_id
+ * - getProjectsByCustomer: Retrieves all projects for a given customer_name
+**/
 
 export const createProject = (db, data) => {
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+        return { ok: false, error: 'invalid payload' };
+    }
+
     const keys = Object.keys(data);
-    if (keys.length === 0) return 'Error: No data provided';
+    if (keys.length === 0) return { ok: false, error: 'no data provided' };
+
+    const droppedKeys = keys.filter((key) => !allowed_fields.includes(key));
+    if (droppedKeys.length > 0) {
+        return {
+            ok: false,
+            error: `invalid fields: ${droppedKeys.join(', ')}`,
+            droppedKeys
+        };
+    }
+
+    const hasProjectNumber = typeof data.project_number === 'string'
+        ? data.project_number.trim().length > 0
+        : !!data.project_number;
+    if (!hasProjectNumber) {
+        return { ok: false, error: 'project_number is required' };
+    }
 
     const columns = keys.join(', ');
     const placeholders = keys.map((key) => `:${key}`).join(', ');
-    const sqlStatement = `INSERT OR IGNORE INTO projects (${columns}) VALUES (${placeholders})`;
+    const sqlStatement = `INSERT INTO projects (${columns}) VALUES (${placeholders})`;
 
     try {
         const stmt = db.prepare(sqlStatement);
-        const info = stmt.run(data);
-        return info.changes > 0 ? 'OP: completed' : 'Error: Project already exist';
+        stmt.run(data);
+        return { ok: true, message: 'project inserted' };
     }
     catch (err) {
-        return `Error: ${err.message}`;
+        if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+            return { ok: false, error: 'project already exists' };
+        }
+
+        if (err.code && err.code.startsWith('SQLITE_CONSTRAINT')) {
+            return { ok: false, error: `constraint error: ${err.message}` };
+        }
+
+        return { ok: false, error: `database error: ${err.message}` };
     }
 }
 
 export const modifyProject = (db, data, project_number) => {
+    if (typeof project_number === 'string' && project_number.trim().length === 0) {
+        return { ok: false, error: 'project_number is required' };
+    }
+    if (!project_number) {
+        return { ok: false, error: 'project_number is required' };
+    }
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+        return { ok: false, error: 'invalid payload' };
+    }
+
     const keys = Object.keys(data);
-    if (keys.length === 0) return 'Error: No data provided';
+    if (keys.length === 0) return { ok: false, error: 'no data provided' };
+
+    const droppedKeys = keys.filter((key) => !allowed_fields.includes(key));
+    if (droppedKeys.length > 0) {
+        return {
+            ok: false,
+            error: `invalid fields: ${droppedKeys.join(', ')}`,
+            droppedKeys
+        };
+    }
+
+    if (keys.includes('project_number')) {
+        return { ok: false, error: 'project_number cannot be updated' };
+    }
 
     const stringStatement = keys.map((key) => `${key} = :${key}`).join(', ');
 
     try {
         const stmt = db.prepare(`UPDATE projects SET ${stringStatement} WHERE project_number = :project_number`);
         const info = stmt.run({ ...data, project_number });
-        return info.changes > 0 ? 'OP: completed' : 'Error: Project not found';
+        return info.changes > 0
+            ? { ok: true, message: 'project updated' }
+            : { ok: false, error: 'project not found' };
     }
     catch (err) {
-        return `Error: ${err.message}`;
+        if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+            return { ok: false, error: 'project already exists' };
+        }
+
+        if (err.code && err.code.startsWith('SQLITE_CONSTRAINT')) {
+            return { ok: false, error: `constraint error: ${err.message}` };
+        }
+
+        return { ok: false, error: `database error: ${err.message}` };
     }
 }
 
 export const deleteProject = (db, project_number) => {
+    if (typeof project_number === 'string' && project_number.trim().length === 0) {
+        return { ok: false, error: 'project_number is required' };
+    }
+    if (!project_number) {
+        return { ok: false, error: 'project_number is required' };
+    }
+
     try {
         const stmt = db.prepare(`DELETE FROM projects WHERE project_number = ?`);
         const info = stmt.run(project_number);
-        return info.changes > 0 ? 'OP: completed' : 'Error: Project not found';
+        return info.changes > 0
+            ? { ok: true, message: 'project deleted' }
+            : { ok: false, error: 'project not found' };
     }
     catch (err) {
-        return `Error: ${err.message}`;
+        return { ok: false, error: `database error: ${err.message}` };
     }
 }
 
@@ -69,54 +140,83 @@ export const getAllProjects = (db) => {
         `;
 
         const stmt = db.prepare(sql);
-        return stmt.all();
+        const projects = stmt.all();
+        return { ok: true, data: projects };
     }
     catch (err) {
-        return `Error: ${err.message}`;
-    }
-}
-
-export const getProjectsByManager = (db, manager_id) => {
-    try {
-        const stmt = db.prepare(`SELECT * FROM projects WHERE manager_id = ?`);
-        return stmt.all(manager_id);
-    } catch (err) {
-        return `Error: ${err.message}`;
-    }
-}
-
-export const getProjectsByCustomer = (db, customer_name) => {
-    try {
-        const stmt = db.prepare(`SELECT * FROM projects WHERE customer_name = ?`);
-        const results = stmt.all(customer_name);
-        return results.length > 0 ? results : 'Error: No projects found for this customer';
-    }
-    catch (err) {
-        return `Error: ${err.message}`;
+        return { ok: false, error: `database error: ${err.message}` };
     }
 }
 
 export const getProjectsByNumber = (db, project_number) => {
+    if (typeof project_number === 'string' && project_number.trim().length === 0) {
+        return { ok: false, error: 'project_number is required' };
+    }
+    if (!project_number) {
+        return { ok: false, error: 'project_number is required' };
+    }
+
     try {
-        const sql = `SELECT projects.*, managers.name AS manager_name
-                     FROM projects 
-                     LEFT JOIN managers ON projects.manager_id = managers.id
-                     WHERE project_number = ?;`;
-        const stmt = db.prepare(`
+        const sql = `
             SELECT projects.*, managers.name AS manager_name
-            FROM projects WHERE project_number = ?;`);
-        const results = stmt.all(project_number);
-        return results.length > 0 ? results : 'Error: Project not found';
+            FROM projects
+            LEFT JOIN managers ON projects.manager_id = managers.id
+            WHERE projects.project_number = ?;
+        `;
+        const stmt = db.prepare(sql);
+        const project = stmt.get(project_number);
+        return project
+            ? { ok: true, data: project }
+            : { ok: false, error: 'project not found' };
     }
     catch (err) {
-        return `Error: ${err.message}`;
+        return { ok: false, error: `database error: ${err.message}` };
     }
 }
 
+export const getProjectsByManager = (db, manager_id) => {
+    if (typeof manager_id === 'string' && manager_id.trim().length === 0) {
+        return { ok: false, error: 'manager_id is required' };
+    }
+    if (!manager_id) {
+        return { ok: false, error: 'manager_id is required' };
+    }
 
-// export const getProjectByProjectNumber = (db, project_number) => { // return one project for a given a project number - 6 digit number
-//     return db.prepare(`SELECT * FROM projects WHERE project_number = ?;`).get(project_number)
-// }
-// export const getProjectsByProjectManager = (db, project_manager) => { // return all projects for a given project manager name - only letters
-//     return db.prepare(`SELECT * FROM projects WHERE project_manager = ?`).all(project_manager)
-// }
+    try {
+        const sql = `
+            SELECT projects.*, managers.name AS manager_name
+            FROM projects
+            LEFT JOIN managers ON projects.manager_id = managers.id
+            WHERE projects.manager_id = ?;
+        `;
+        const stmt = db.prepare(sql);
+        const projects = stmt.all(manager_id);
+        return { ok: true, data: projects };
+    } catch (err) {
+        return { ok: false, error: `database error: ${err.message}` };
+    }
+}
+
+export const getProjectsByCustomer = (db, customer_name) => {
+    if (typeof customer_name === 'string' && customer_name.trim().length === 0) {
+        return { ok: false, error: 'customer_name is required' };
+    }
+    if (!customer_name) {
+        return { ok: false, error: 'customer_name is required' };
+    }
+
+    try {
+        const sql = `
+            SELECT projects.*, managers.name AS manager_name
+            FROM projects
+            LEFT JOIN managers ON projects.manager_id = managers.id
+            WHERE projects.customer_name = ?;
+        `;
+        const stmt = db.prepare(sql);
+        const projects = stmt.all(customer_name);
+        return { ok: true, data: projects };
+    }
+    catch (err) {
+        return { ok: false, error: `database error: ${err.message}` };
+    }
+}
