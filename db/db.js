@@ -4,6 +4,8 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import managerSchema from './schema/manager.schema.js'
 import projectSchema from './schema/project.schema.js'
+import operationsSchema from './schema/operations.schema.js'
+import projectsLookupSchema from './schema/projectsLookup.schema.js'
 
 // Load environment variables early for DB_PATH
 dotenv.config()
@@ -28,16 +30,10 @@ console.log('DB-> Managers table initialized')
 db.prepare(projectSchema).run()
 console.log('DB-> Projects table initialized')
 
+db.prepare(operationsSchema).run()
+console.log('DB-> Operations planned dates table initialized')
+
+db.prepare(projectsLookupSchema).run()
+console.log('DB-> Projects lookup queue table initialized')
+
 export default db
-
-// db.prepare(initSettingsTable).run()
-// console.log('DB-> State table initialized')
-
-// Initial DB data
-// import { insertProjects } from './services/projects_Serv.js'
-// import dataReadyForSQLite from './helpers/excel_DataReadyForSQLite.js'
-// insertProjects(db, dataReadyForSQLite())
-
-// import dataActiveManagers from './helpers/data_active_managers.js'
-// import { insertManagers } from './services/managers_Serv.js'
-// insertManagers(db, dataActiveManagers)

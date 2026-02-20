@@ -1,4 +1,7 @@
 import allowed_fields from '../helpers/_ALLOWED_PROJECT_FIELDS.js'
+import operationsFields from '../helpers/_OPERATIONS_FIELDS.js'
+import { getOperationsPlanByProjectNumber } from './operations.repo.js'
+import { enqueueProject } from './projectsLookup.repo.js'
 
 /**
  * PROJECTS DATABASE REPOSITORIES
@@ -45,9 +48,39 @@ export const createProject = (db, data) => {
     const sqlStatement = `INSERT INTO projects (${columns}) VALUES (${placeholders})`;
 
     try {
-        const stmt = db.prepare(sqlStatement);
-        stmt.run(data);
-        return { ok: true, message: 'project inserted' };
+        const insertProject = db.prepare(sqlStatement)
+        const updateProjectOperations = db.prepare(`
+            UPDATE projects
+            SET ${operationsFields.map((field) => `${field} = :${field}`).join(', ')}
+            WHERE project_number = :project_number
+        `)
+
+        const tx = db.transaction((payload) => {
+            insertProject.run(payload)
+
+            const operationsResult = getOperationsPlanByProjectNumber(db, payload.project_number)
+            if (operationsResult.ok) {
+                const operationsPayload = operationsFields.reduce((acc, field) => {
+                    acc[field] = operationsResult.data[field] ?? null
+                    return acc
+                }, { project_number: payload.project_number })
+
+                updateProjectOperations.run(operationsPayload)
+                return { ok: true, message: 'project inserted', lookup_status: 'enriched' }
+            }
+
+            if (operationsResult.error === 'operations plan not found') {
+                const queueResult = enqueueProject(db, payload.project_number, { status: 'pending' })
+                if (!queueResult.ok) {
+                    throw new Error(queueResult.error)
+                }
+                return { ok: true, message: 'project inserted', lookup_status: 'queued' }
+            }
+
+            throw new Error(operationsResult.error)
+        })
+
+        return tx(data)
     }
     catch (err) {
         if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') {

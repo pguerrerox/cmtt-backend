@@ -2,6 +2,8 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createTestDb } from '../helpers/test-db.js'
 import { createManager } from '../../repositories/managers.repo.js'
+import { upsert as upsertOperationsPlan } from '../../repositories/operations.repo.js'
+import { getProjectByNumber as getQueuedProjectByNumber } from '../../repositories/projectsLookup.repo.js'
 import {
     createProject,
     getProjectsByNumber,
@@ -60,4 +62,43 @@ test('deleteProject returns not found on missing project', () => {
     const deleted = deleteProject(db, 'does-not-exist')
     assert.equal(deleted.ok, false)
     assert.equal(deleted.error, 'project not found')
+})
+
+test('createProject enriches project when operations plan exists', () => {
+    const db = createTestDb()
+    upsertOperationsPlan(db, {
+        project_number: 'P-7000',
+        kickoff_date_planned: 1760918400000,
+        ship_date_planned: 1763510400000,
+        source_version: 'v1'
+    })
+
+    const created = createProject(db, {
+        project_number: 'P-7000',
+        customer_name: 'ACME'
+    })
+
+    assert.equal(created.ok, true)
+    assert.equal(created.lookup_status, 'enriched')
+
+    const project = getProjectsByNumber(db, 'P-7000')
+    assert.equal(project.ok, true)
+    assert.equal(project.data.kickoff_date_planned, 1760918400000)
+    assert.equal(project.data.ship_date_planned, 1763510400000)
+})
+
+test('createProject queues project when operations plan does not exist', () => {
+    const db = createTestDb()
+
+    const created = createProject(db, {
+        project_number: 'P-7001',
+        customer_name: 'ACME'
+    })
+
+    assert.equal(created.ok, true)
+    assert.equal(created.lookup_status, 'queued')
+
+    const queued = getQueuedProjectByNumber(db, 'P-7001')
+    assert.equal(queued.ok, true)
+    assert.equal(queued.data.status, 'pending')
 })

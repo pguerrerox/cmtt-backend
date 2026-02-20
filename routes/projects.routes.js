@@ -41,6 +41,7 @@ router.post('/createProject', (req, res) => {
         }
         res.status(201).json({
             message: `Project ${req.body.project_number} was created successfully`,
+            lookup_status: result.lookup_status,
             status: result
         })
     }

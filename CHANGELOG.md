@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-02-20
+
+### Added
+- Added operations planned dates schema and repository:
+  - `db/schema/operations.schema.js`
+  - `repositories/operations.repo.js` (`upsert`, `getOperationsPlanByProjectNumber`)
+- Added project lookup queue schema and repository:
+  - `db/schema/projectsLookup.schema.js`
+  - `repositories/projectsLookup.repo.js` (`enqueueProject`, `getProjectByNumber`, `getAllQueue`)
+- Added shared operations planned-date field map:
+  - `helpers/_OPERATIONS_FIELDS.js`
+- Added repository tests for new operations and queue repositories:
+  - `tests/repositories/operations.repo.test.js`
+  - `tests/repositories/projectsLookup.repo.test.js`
+
+### Changed
+- Updated DB bootstrap and test DB bootstrap to initialize operations and lookup queue tables.
+- Wired `createProject` to:
+  - enrich projects from `operations_planned_dates` when found
+  - enqueue project numbers into `projects_lookup_queue` when not found
+- Updated `POST /createProject` response to include `lookup_status` (`enriched` or `queued`).
+- Normalized date/timestamp write paths in operations/queue repositories to store integer values.
+- Expanded project repository/route tests to cover enriched and queued create-project flows.
+- Updated `TODO.md` progress/status to reflect completed P0 items and P1 wiring.
+
 ## [0.3.1] - 2026-02-19
 
 ### Added

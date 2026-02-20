@@ -2,6 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import projectsRouter from '../../routes/projects.routes.js'
 import { createTestDb } from '../helpers/test-db.js'
+import { upsert as upsertOperationsPlan } from '../../repositories/operations.repo.js'
 
 function getRouteHandler(router, method, path) {
     const layer = router.stack.find((item) =>
@@ -45,6 +46,7 @@ test('POST /createProject creates project', () => {
 
     assert.equal(res.statusCode, 201)
     assert.match(res.body.message, /was created successfully/)
+    assert.equal(res.body.lookup_status, 'queued')
 })
 
 test('POST /createProject returns 409 for duplicate project_number', () => {
@@ -83,4 +85,30 @@ test('GET /projects/:project_number returns 404 when missing', () => {
 
     assert.equal(res.statusCode, 404)
     assert.equal(res.body.error, 'project not found')
+})
+
+test('POST /createProject returns lookup_status enriched when operations exists', () => {
+    const handler = getRouteHandler(projectsRouter, 'post', '/createProject')
+    const db = createTestDb()
+    const res = createMockRes()
+
+    upsertOperationsPlan(db, {
+        project_number: 'P-8000',
+        kickoff_date_planned: 1760918400000,
+        ship_date_planned: 1763510400000
+    })
+
+    handler(
+        {
+            db,
+            body: {
+                project_number: 'P-8000',
+                customer_name: 'ACME'
+            }
+        },
+        res
+    )
+
+    assert.equal(res.statusCode, 201)
+    assert.equal(res.body.lookup_status, 'enriched')
 })
