@@ -22,6 +22,7 @@ Create a `.env` file in the project root.
 
 ## Scripts
 - `npm run start` starts the API with `nodemon`.
+- `npm test` runs the test suite with Node's built-in test runner.
 
 ## Changelog
 See `CHANGELOG.md`.

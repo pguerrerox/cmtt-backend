@@ -5,7 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.3.1] - 2026-02-19
+
+### Added
+- Added a reusable app factory (`app.factory.js`) to create Express apps with injected DB context.
+- Added a native Node test framework baseline (`npm test` using `node --test`).
+- Added repository unit tests:
+  - `tests/repositories/managers.repo.test.js`
+  - `tests/repositories/projects.repo.test.js`
+- Added route unit tests:
+  - `tests/routes/admin.routes.test.js`
+  - `tests/routes/projects.routes.test.js`
+- Added an in-memory SQLite test DB helper (`tests/helpers/test-db.js`).
+
+### Changed
+- Refactored `app.js` to build the server via `createApp(db)` while preserving runtime behavior.
+- Updated `README.md` Scripts section to document `npm test`.
+- Expanded `TODO.md` with a more detailed phased backlog for operations lookup, queueing, scheduling, and tests.
 
 ## [0.3.0] - 2026-02-12
 

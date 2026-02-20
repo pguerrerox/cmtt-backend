@@ -1,22 +1,7 @@
-import express from 'express'
-import cookieParser from 'cookie-parser'
 import db from './db/db.js'
+import createApp from './app.factory.js'
 
-// Initialize Express app
-const app = express()
-
-// Middlewares
-app.use(express.json())
-app.use(cookieParser())
-app.use((req, res, next) => {
-  req.db = db
-  next()
-})
-
-// Declaring routes
-import admins from './routes/admin.routes.js'
-import projects from './routes/projects.routes.js'
-app.use('/api', admins, projects)
+const app = createApp(db)
 
 // Start the server
 const PORT = process.env.PORT || 5000

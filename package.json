@@ -1,7 +1,7 @@
 {
   "name": "cm-tracksyst",
   "productName": "cm-tracksyst",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "API for this application",
   "keywords": [],
   "author": "Pedro Guerrero",
@@ -20,6 +20,7 @@
     "nodemon": "^3.1.9"
   },
   "scripts": {
-    "start": "nodemon ./app.js"
+    "start": "nodemon ./app.js",
+    "test": "node --test"
   }
 }
