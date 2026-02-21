@@ -107,3 +107,118 @@ export const getAllQueue = (db) => {
         return { ok: false, error: `database error: ${err.message}` }
     }
 }
+
+export const getDueQueueItems = (db, now = Date.now(), limit = 50) => {
+    const safeNow = toIntegerDate(now)
+    const safeLimit = Number.isInteger(limit) && limit > 0 ? limit : 50
+
+    if (safeNow === null) {
+        return { ok: false, error: 'invalid now timestamp' }
+    }
+
+    try {
+        const projects = db.prepare(`
+            SELECT * FROM projects_lookup_queue
+            WHERE status = 'pending'
+              AND (next_attempt_date IS NULL OR next_attempt_date <= ?)
+            ORDER BY next_attempt_date IS NULL, next_attempt_date ASC, created_at ASC
+            LIMIT ?;
+        `).all(safeNow, safeLimit)
+
+        return { ok: true, data: projects }
+    }
+    catch (err) {
+        return { ok: false, error: `database error: ${err.message}` }
+    }
+}
+
+export const updateQueueEntry = (db, project_number, updates = {}) => {
+    if (typeof project_number === 'string' && project_number.trim().length === 0) {
+        return { ok: false, error: 'project_number is required' }
+    }
+    if (!project_number) {
+        return { ok: false, error: 'project_number is required' }
+    }
+    if (!updates || typeof updates !== 'object' || Array.isArray(updates)) {
+        return { ok: false, error: 'invalid payload' }
+    }
+
+    const clauses = []
+    const payload = { project_number }
+
+    if (updates.status !== undefined) {
+        if (!allowedStatuses.includes(updates.status)) {
+            return { ok: false, error: 'invalid status' }
+        }
+        clauses.push('status = :status')
+        payload.status = updates.status
+    }
+
+    if (updates.attempts !== undefined) {
+        if (!Number.isInteger(updates.attempts) || updates.attempts < 0) {
+            return { ok: false, error: 'invalid attempts' }
+        }
+        clauses.push('attempts = :attempts')
+        payload.attempts = updates.attempts
+    }
+
+    if (updates.last_attempt_date !== undefined) {
+        const lastAttemptDate = toIntegerDate(updates.last_attempt_date)
+        clauses.push('last_attempt_date = :last_attempt_date')
+        payload.last_attempt_date = lastAttemptDate
+    }
+
+    if (updates.next_attempt_date !== undefined) {
+        const nextAttemptDate = toIntegerDate(updates.next_attempt_date)
+        clauses.push('next_attempt_date = :next_attempt_date')
+        payload.next_attempt_date = nextAttemptDate
+    }
+
+    if (clauses.length === 0) {
+        return { ok: false, error: 'no data provided' }
+    }
+
+    payload.updated_at = Date.now()
+    clauses.push('updated_at = :updated_at')
+
+    const sql = `
+        UPDATE projects_lookup_queue
+        SET ${clauses.join(', ')}
+        WHERE project_number = :project_number;
+    `
+
+    try {
+        const info = db.prepare(sql).run(payload)
+        return info.changes > 0
+            ? { ok: true, message: 'queue entry updated' }
+            : { ok: false, error: 'project not found in queue' }
+    }
+    catch (err) {
+        if (err.code && err.code.startsWith('SQLITE_CONSTRAINT')) {
+            return { ok: false, error: `constraint error: ${err.message}` }
+        }
+        return { ok: false, error: `database error: ${err.message}` }
+    }
+}
+
+export const removeFromQueue = (db, project_number) => {
+    if (typeof project_number === 'string' && project_number.trim().length === 0) {
+        return { ok: false, error: 'project_number is required' }
+    }
+    if (!project_number) {
+        return { ok: false, error: 'project_number is required' }
+    }
+
+    try {
+        const info = db.prepare(`
+            DELETE FROM projects_lookup_queue WHERE project_number = ?;
+        `).run(project_number)
+
+        return info.changes > 0
+            ? { ok: true, message: 'queue entry removed' }
+            : { ok: false, error: 'project not found in queue' }
+    }
+    catch (err) {
+        return { ok: false, error: `database error: ${err.message}` }
+    }
+}

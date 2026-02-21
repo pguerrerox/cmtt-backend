@@ -1,17 +1,20 @@
 # TODO
 
 ## P0
-- [ ] Create scheduler/worker for the recurrent tasks.
-
-## P1
 - [ ] Implement service to read a `PDF` file and extract information about a project.
   After creating a project the manager has the option to upload on the frontend an order report, the backend will read the file and extract the programmed information. 
 
-## P2
-- [ ] Add Repo unit tests (projects/managers)
-- [ ] Add Routes unit tests (admin/managers/projects)
+## P1
+- [ ]  
 
-## P3
+## P2
+- [ ] 
+
+
+## Ideas
+- Auth implementation?
+- Storage for files?
+- Pre-process data from projects?
 
 
 ## Done
@@ -35,9 +38,7 @@
   - Create `projectsLookup.repo.js`
     Need at least the following methods: `enqueueProject`, `getProjectByNumber`, and `getAllQueue`.
 
-  - [x] Wire up the `createProject` method to lookup the `operations data` or `enqueueProject`  
+- [x] Wire up the `createProject` method to lookup the `operations data` or `enqueueProject`  
 
-## Ideas
-- Auth implementation?
-- Storage for files?
-- Pre-process data from projects?
+- [x] Create scheduler/worker for the recurrent tasks.
+    Implemented as one-shot worker command triggered by external scheduler.

@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [0.5.0] - 2026-02-21
+
+### Added
+- Added one-shot lookup-queue worker (`npm run worker:projects-lookup`) to enrich projects from operations planned dates.
+- Added worker configuration env vars: `LOOKUP_BATCH_SIZE`, `LOOKUP_RETRY_DELAY_MS`, `LOOKUP_MAX_ATTEMPTS`.
+- Added worker tests covering enrich, retry, and max-attempt failure behavior.
+
+### Changed
+- Extended lookup queue repository with worker support helpers: `getDueQueueItems`, `updateQueueEntry`, `removeFromQueue`.
+- Expanded lookup queue repository tests for due selection, updates, and dequeue flows.
+- Updated README with worker usage, scheduling guidance, and configuration.
+
 ## [0.4.0] - 2026-02-20
 
 ### Added
