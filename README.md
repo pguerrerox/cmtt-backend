@@ -1,38 +1,26 @@
-# CMTT Backend
+# CMTT Monorepo
 
-Backend API and database for the Commitment Managers Tracking Tool. This service supports commitment managers as they track ongoing projects.
+Monorepo for the Commitment Managers Tracking Tool.
 
-## What This Is
-- Node.js + Express REST API
-- SQLite database via `better-sqlite3`
-- Auth and admin routes for project management workflows
+## Structure
+- `apps/backend`: Node.js + Express API, SQLite schemas/repos, workers, tests.
+- `apps/frontend`: Frontend app workspace (to be scaffolded).
+- `packages`: Shared packages across backend/frontend.
+- `docs`: Architecture and API documentation.
 
-## Local Development
-1. Install dependencies:
-   `npm install`
-2. Configure environment variables (see below).
-3. Run the server:
-   `npm run start`
+## Workspace Commands
+- `npm run dev:backend` starts the backend API.
+- `npm run test:backend` runs backend tests.
+- `npm run worker:projects-lookup` runs one lookup worker pass.
+- `npm run dev:frontend` runs frontend dev script.
 
-## Environment Variables
-Create a `.env` file in the project root.
+## Versioning Policy
+- Backend (`apps/backend`) and frontend (`apps/frontend`) are versioned independently.
+- Use semantic versioning per app (`MAJOR.MINOR.PATCH`).
+- Tag releases by app: `backend-vX.Y.Z` and `frontend-vX.Y.Z`.
+- Keep the root package version for workspace/tooling metadata only.
 
-- `PORT` (optional, default `5000`)
-- `DB_PATH` (optional, default `../databases/dev_main.db`, resolved relative to `db/db.js`)
-- `LOOKUP_BATCH_SIZE` (optional, default `50`)
-- `LOOKUP_RETRY_DELAY_MS` (optional, default `3600000`)
-- `LOOKUP_MAX_ATTEMPTS` (optional, default `8`)
-
-## Scripts
-- `npm run start` starts the API with `nodemon`.
-- `npm test` runs the test suite with Node's built-in test runner.
-- `npm run worker:projects-lookup` runs a single lookup-queue worker pass.
-
-## Recurrent Lookup Worker
-- The queue reconciliation runs as a one-shot worker command and should be triggered by an external scheduler.
-- Recommended trigger: OS cron, container cron, or platform scheduled job.
-- Example cron (every 15 minutes):
-  `*/15 * * * * cd /path/to/cmtt-backend && npm run worker:projects-lookup >> /var/log/cmtt-worker.log 2>&1`
-
-## Changelog
-See `CHANGELOG.md`.
+## Getting Started
+1. Install dependencies from repo root: `npm install`
+2. Add backend env vars in `apps/backend/.env`
+3. Run backend: `npm run dev:backend`

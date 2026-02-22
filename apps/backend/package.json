@@ -1,0 +1,27 @@
+{
+  "name": "@cmtt/backend",
+  "private": true,
+  "version": "0.5.1",
+  "description": "API for this application",
+  "keywords": [],
+  "author": "Pedro Guerrero",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "scripts": {
+    "start": "nodemon ./app.js",
+    "test": "node --test",
+    "worker:projects-lookup": "node ./workers/run-projects-lookup-once.js"
+  }
+}

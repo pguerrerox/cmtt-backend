@@ -1,0 +1,10 @@
+{
+  "name": "@cmtt/frontend",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "node -e \"console.log('Scaffold frontend app in apps/frontend first.')\"",
+    "build": "node -e \"console.log('Add frontend build script after framework setup.')\"",
+    "test": "node -e \"console.log('Add frontend tests after framework setup.')\""
+  }
+}
