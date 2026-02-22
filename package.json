@@ -9,6 +9,7 @@
     "dev:backend": "npm run start --workspace @cmtt/backend",
     "test:backend": "npm run test --workspace @cmtt/backend",
     "worker:projects-lookup": "npm run worker:projects-lookup --workspace @cmtt/backend",
-    "dev:frontend": "npm run dev --workspace @cmtt/frontend"
+    "dev:frontend": "npm run dev --workspace @cmtt/frontend",
+    "build:frontend": "npm run build --workspace @cmtt/frontend"
   }
 }

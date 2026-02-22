@@ -1,10 +1,10 @@
-# CMTT Monorepo
+# CMTT
 
 Monorepo for the Commitment Managers Tracking Tool.
 
 ## Structure
 - `apps/backend`: Node.js + Express API, SQLite schemas/repos, workers, tests.
-- `apps/frontend`: Frontend app workspace (to be scaffolded).
+- `apps/frontend`: React + Vite UI for admin/manager/project workflows.
 - `packages`: Shared packages across backend/frontend.
 - `docs`: Architecture and API documentation.
 
@@ -12,7 +12,8 @@ Monorepo for the Commitment Managers Tracking Tool.
 - `npm run dev:backend` starts the backend API.
 - `npm run test:backend` runs backend tests.
 - `npm run worker:projects-lookup` runs one lookup worker pass.
-- `npm run dev:frontend` runs frontend dev script.
+- `npm run dev:frontend` starts the frontend app.
+- `npm run build:frontend` builds the frontend app.
 
 ## Versioning Policy
 - Backend (`apps/backend`) and frontend (`apps/frontend`) are versioned independently.

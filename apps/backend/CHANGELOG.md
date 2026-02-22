@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-02-22
+
+### Added
+- Added configurable CORS origin allowlist support via `CORS_ORIGINS`.
+- Added managers router mounting in the API app factory so manager read endpoints are exposed under `/api`.
+
+### Changed
+- Enabled CORS middleware with credentials support and local Vite defaults for frontend development.
+- Updated backend README environment variable documentation with `CORS_ORIGINS` usage.
+
 ## [0.5.1] - 2026-02-21
 
 ### Added

@@ -22,6 +22,7 @@ Create a `.env` file in `apps/backend`.
 - `LOOKUP_BATCH_SIZE` (optional, default `50`)
 - `LOOKUP_RETRY_DELAY_MS` (optional, default `3600000`)
 - `LOOKUP_MAX_ATTEMPTS` (optional, default `8`)
+- `CORS_ORIGINS` (optional, comma-separated list, example `http://localhost:5173,http://localhost:4173`)
 
 ## Scripts
 - `npm run start` starts the API with `nodemon`.
