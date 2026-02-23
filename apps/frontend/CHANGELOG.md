@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-02-22
+
+### Added
+- Added admin role radio options for manager creation: `Team Leader`, `Senior Project Manager`, `Project Manager`, and `Guest`.
+
+### Changed
+- Changed manager role input from free-text to single-select radio controls.
+- Set `Project Manager` as the default role in the admin create-manager form.
+
 ## [0.2.0] - 2026-02-22
 
 ### Added

@@ -9,6 +9,24 @@ import operationsFields from '../helpers/_OPERATIONS_FIELDS.js'
 const allowedFields = ['project_number', ...operationsFields, 'source_version', 'refreshed_at']
 const integerDateFields = new Set([...operationsFields, 'refreshed_at'])
 
+const toEpochFromSlashDate = (value) => {
+    const match = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})$/)
+    if (!match) return null
+
+    const month = Number(match[1])
+    const day = Number(match[2])
+    const yearPart = match[3]
+    const year = yearPart.length === 2 ? 2000 + Number(yearPart) : Number(yearPart)
+
+    if (!Number.isInteger(month) || !Number.isInteger(day) || !Number.isInteger(year)) return null
+    if (month < 1 || month > 12 || day < 1 || day > 31) return null
+
+    const parsed = new Date(year, month - 1, day)
+    if (Number.isNaN(parsed.getTime())) return null
+
+    return parsed.getTime()
+}
+
 /**
  * Normalizes a date-like value to an integer timestamp.
  *
@@ -21,6 +39,10 @@ const toIntegerDate = (value) => {
     if (typeof value === 'string') {
         const trimmed = value.trim()
         if (!trimmed) return null
+
+        const slashDateEpoch = toEpochFromSlashDate(trimmed)
+        if (slashDateEpoch !== null) return Math.trunc(slashDateEpoch)
+
         const numeric = Number(trimmed)
         if (Number.isFinite(numeric)) return Math.trunc(numeric)
     }

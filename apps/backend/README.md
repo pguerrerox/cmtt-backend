@@ -28,11 +28,19 @@ Create a `.env` file in `apps/backend`.
 - `npm run start` starts the API with `nodemon`.
 - `npm test` runs the test suite with Node's built-in test runner.
 - `npm run worker:projects-lookup` runs a single lookup-queue worker pass.
+- `npm run worker:operations-import` runs one operations-data import pass from the Excel source file.
 
 From repo root, use workspace wrappers:
 - `npm run dev:backend`
 - `npm run test:backend`
 - `npm run worker:projects-lookup`
+- `npm run operations:import`
+
+## Operations Data Import
+- The operations table is populated by an explicit one-shot import command and is not auto-loaded on API startup.
+- Run manually when the source workbook changes:
+  `npm run operations:import`
+- Recommended trigger: scheduler/cron based on your operations data refresh cadence.
 
 ## Recurrent Lookup Worker
 - The queue reconciliation runs as a one-shot worker command and should be triggered by an external scheduler.

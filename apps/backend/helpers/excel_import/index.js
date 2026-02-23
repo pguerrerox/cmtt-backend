@@ -41,8 +41,8 @@ export default () => {
         range: workingRange,
         defval: 'NULL',
         header: headers.originalHeaders
-    });
-    
+    })
+
     return cleanedData(data)
 }
 

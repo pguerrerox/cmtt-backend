@@ -16,7 +16,7 @@ function insertManager(db) {
         name: 'pm1',
         fullname: 'Project Manager',
         email: 'pm1@example.com',
-        role: 'PM',
+        role: 'Project Manager',
         isActive: 1,
         isAdmin: 0
     })

@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS managers (
     name TEXT,
     fullname TEXT,
     email TEXT UNIQUE,
-    role TEXT,
+    role TEXT CHECK (role IN ('Team Leader', 'Senior Project Manager', 'Project Manager', 'Guest')),
     isActive INTEGER,
     isAdmin INTEGER
 )`

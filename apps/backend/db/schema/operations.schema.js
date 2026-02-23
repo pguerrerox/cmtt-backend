@@ -18,7 +18,8 @@ export default `
 CREATE TABLE IF NOT EXISTS operations_planned_dates (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     project_number TEXT UNIQUE NOT NULL,
-${operationsColumns},
+    project_description TEXT,
+    ${operationsColumns},
     source_version TEXT,
     refreshed_at INTEGER NOT NULL
 )`

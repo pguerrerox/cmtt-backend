@@ -15,7 +15,7 @@ test('createManager creates and fetches a manager', () => {
         name: 'jdoe',
         fullname: 'John Doe',
         email: 'john.doe@example.com',
-        role: 'PM',
+        role: 'Project Manager',
         isActive: 1,
         isAdmin: 0
     })
@@ -32,7 +32,7 @@ test('createManager rejects duplicate email', () => {
         name: 'jdoe',
         fullname: 'John Doe',
         email: 'john.doe@example.com',
-        role: 'PM',
+        role: 'Project Manager',
         isActive: 1,
         isAdmin: 0
     }
@@ -50,13 +50,48 @@ test('updateManager returns not found for unknown id', () => {
     assert.equal(result.error, 'manager not found')
 })
 
+test('createManager rejects invalid role', () => {
+    const db = createTestDb()
+
+    const result = createManager(db, {
+        name: 'invalid-role-user',
+        fullname: 'Invalid Role',
+        email: 'invalid.role@example.com',
+        role: 'PM',
+        isActive: 1,
+        isAdmin: 0
+    })
+
+    assert.equal(result.ok, false)
+    assert.match(result.error, /invalid role/)
+})
+
+test('updateManager rejects invalid role', () => {
+    const db = createTestDb()
+
+    createManager(db, {
+        name: 'jdoe',
+        fullname: 'John Doe',
+        email: 'john.doe@example.com',
+        role: 'Project Manager',
+        isActive: 1,
+        isAdmin: 0
+    })
+
+    const managerId = db.prepare('SELECT id FROM managers WHERE name = ?').get('jdoe').id
+    const result = updateManager(db, managerId, { role: 'Lead PM' })
+
+    assert.equal(result.ok, false)
+    assert.match(result.error, /invalid role/)
+})
+
 test('deleteManager removes an existing manager', () => {
     const db = createTestDb()
     createManager(db, {
         name: 'jdoe',
         fullname: 'John Doe',
         email: 'john.doe@example.com',
-        role: 'PM',
+        role: 'Project Manager',
         isActive: 1,
         isAdmin: 0
     })

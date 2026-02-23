@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-02-22
+
+### Added
+- Added one-shot operations import worker commands (`worker:operations-import` in backend and `operations:import` at monorepo root) to populate `operations_planned_dates` from the Excel source.
+- Added manager role allowlist helper and repository validation for manager create/update flows.
+- Added tests for operations import worker behavior and manager role validation paths.
+
+### Changed
+- Updated manager schema to constrain `role` values to `Team Leader`, `Senior Project Manager`, `Project Manager`, and `Guest`.
+- Improved operations date normalization to parse slash-formatted Excel date strings (for example `MM/DD/YYYY`) into integer timestamps.
+- Removed debug logging from Excel import helper and updated backend/docs guidance for explicit operations import usage.
+
 ## [0.6.0] - 2026-02-22
 
 ### Added

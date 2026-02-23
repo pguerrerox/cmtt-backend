@@ -39,7 +39,7 @@ test('POST /admin/createManager creates manager', () => {
                 name: 'jdoe',
                 fullname: 'John Doe',
                 email: 'john.doe@example.com',
-                role: 'PM',
+                role: 'Project Manager',
                 isActive: 1,
                 isAdmin: 0
             }
@@ -58,7 +58,7 @@ test('POST /admin/createManager returns 409 for duplicate manager', () => {
         name: 'jdoe',
         fullname: 'John Doe',
         email: 'john.doe@example.com',
-        role: 'PM',
+        role: 'Project Manager',
         isActive: 1,
         isAdmin: 0
     }
@@ -72,4 +72,28 @@ test('POST /admin/createManager returns 409 for duplicate manager', () => {
     assert.equal(firstRes.statusCode, 201)
     assert.equal(duplicateRes.statusCode, 409)
     assert.equal(duplicateRes.body.error, 'manager already exists')
+})
+
+test('POST /admin/createManager returns 400 for invalid role', () => {
+    const handler = getRouteHandler(adminRouter, 'post', '/admin/createManager')
+    const db = createTestDb()
+    const res = createMockRes()
+
+    handler(
+        {
+            db,
+            body: {
+                name: 'invalidrole',
+                fullname: 'Invalid Role',
+                email: 'invalid.role@example.com',
+                role: 'PM',
+                isActive: 1,
+                isAdmin: 0
+            }
+        },
+        res
+    )
+
+    assert.equal(res.statusCode, 400)
+    assert.match(res.body.error, /invalid role/)
 })

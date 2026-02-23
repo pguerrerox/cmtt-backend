@@ -1,11 +1,18 @@
 import { useEffect, useState } from 'react'
 import { createManager, getManagersAdmin } from '../shared/api/managers.js'
 
+const MANAGER_ROLE_OPTIONS = [
+  'Team Leader',
+  'Senior Project Manager',
+  'Project Manager',
+  'Guest'
+]
+
 const initialForm = {
   name: '',
   fullname: '',
   email: '',
-  role: '',
+  role: 'Project Manager',
   isActive: 1,
   isAdmin: 0
 }
@@ -94,14 +101,25 @@ export default function AdminPage() {
             />
           </label>
 
-          <label>
-            Role
-            <input
-              required
-              value={form.role}
-              onChange={(event) => setForm((prev) => ({ ...prev, role: event.target.value }))}
-            />
-          </label>
+          <fieldset className="role-group">
+            <legend>Role</legend>
+            <div className="role-options">
+              {MANAGER_ROLE_OPTIONS.map((role) => (
+                <label key={role} className="radio-option">
+                  <input
+                    type="radio"
+                    name="role"
+                    value={role}
+                    checked={form.role === role}
+                    onChange={(event) =>
+                      setForm((prev) => ({ ...prev, role: event.target.value }))
+                    }
+                  />
+                  {role}
+                </label>
+              ))}
+            </div>
+          </fieldset>
 
           <label className="checkbox">
             <input

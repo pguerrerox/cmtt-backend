@@ -1,4 +1,5 @@
 import allowed_fields from '../helpers/_ALLOWED_MANAGER_FIELDS.js'
+import managerRoles from '../helpers/_MANAGER_ROLES.js'
 
 /**
  * Managers repository.
@@ -28,6 +29,13 @@ export const createManager = (db, data) => {
             error: `invalid fields: ${droppedKeys.join(', ')}`,
             droppedKeys
         };
+    }
+
+    if (!managerRoles.includes(data.role)) {
+        return {
+            ok: false,
+            error: `invalid role: must be one of ${managerRoles.join(', ')}`
+        }
     }
 
     const columns = keys.join(', ');
@@ -81,6 +89,13 @@ export const updateManager = (db, id, data) => {
             error: `invalid fields: ${droppedKeys.join(', ')}`,
             droppedKeys
         };
+    }
+
+    if (data.role !== undefined && !managerRoles.includes(data.role)) {
+        return {
+            ok: false,
+            error: `invalid role: must be one of ${managerRoles.join(', ')}`
+        }
     }
 
     const setClause = keys.map((key) => `${key} = :${key}`).join(', ');

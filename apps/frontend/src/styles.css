@@ -187,6 +187,28 @@ thead th {
   align-items: center;
 }
 
+.role-group {
+  border: 1px solid #d8e5ed;
+  border-radius: 10px;
+  padding: 0.6rem;
+  margin: 0;
+}
+
+.role-group legend {
+  padding: 0 0.3rem;
+  font-weight: 700;
+}
+
+.role-options {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.radio-option {
+  flex-direction: row;
+  align-items: center;
+}
+
 .manager-list {
   list-style: none;
   margin: 0;
@@ -226,6 +248,7 @@ thead th {
   .form-grid .panel-header,
   .form-grid .success,
   .form-grid .error,
+  .form-grid .role-group,
   .form-grid button {
     grid-column: span 2;
   }

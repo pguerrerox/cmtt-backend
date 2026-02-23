@@ -28,4 +28,6 @@ Base path: `/api`
 - Typical response codes: `200`, `201`, `400`, `404`, `409`, `500`.
 - `createProject` returns `lookup_status` indicating immediate enrichment or queueing.
 - Read-only manager routes are implemented in `apps/backend/routes/managers.routes.js`.
+- Manager role values are constrained to: `Team Leader`, `Senior Project Manager`, `Project Manager`, `Guest`.
+- Operations enrichment depends on running `npm run operations:import` to refresh `operations_planned_dates` from the Excel source.
 - Auth and API versioning strategy should be defined before production rollout.

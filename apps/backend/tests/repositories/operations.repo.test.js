@@ -46,6 +46,42 @@ test('upsert updates existing operations row by project_number', () => {
     assert.equal(fetched.data.source_version, 'v2')
 })
 
+test('upsert parses slash-formatted date strings from import data', () => {
+    const db = createTestDb()
+
+    const result = upsert(db, {
+        project_number: 'P-5002',
+        kickoff_date_planned: '05/08/2017',
+        ship_date_planned: '07/27/2018',
+        source_version: 'excel-import'
+    })
+
+    assert.equal(result.ok, true)
+
+    const fetched = getOperationsPlanByProjectNumber(db, 'P-5002')
+    assert.equal(fetched.ok, true)
+    assert.equal(typeof fetched.data.kickoff_date_planned, 'number')
+    assert.equal(typeof fetched.data.ship_date_planned, 'number')
+    assert.notEqual(fetched.data.kickoff_date_planned, null)
+    assert.notEqual(fetched.data.ship_date_planned, null)
+})
+
+test('upsert stores null for invalid date strings', () => {
+    const db = createTestDb()
+
+    const result = upsert(db, {
+        project_number: 'P-5003',
+        kickoff_date_planned: 'NOT_A_DATE',
+        source_version: 'excel-import'
+    })
+
+    assert.equal(result.ok, true)
+
+    const fetched = getOperationsPlanByProjectNumber(db, 'P-5003')
+    assert.equal(fetched.ok, true)
+    assert.equal(fetched.data.kickoff_date_planned, null)
+})
+
 test('getOperationsPlanByProjectNumber returns not found when missing', () => {
     const db = createTestDb()
     const result = getOperationsPlanByProjectNumber(db, 'missing')
