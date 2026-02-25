@@ -11,3 +11,11 @@ export function getManagersAdmin() {
 export function createManager(payload) {
   return apiClient.post('/api/admin/createManager', payload)
 }
+
+export function updateManager(id, payload) {
+  return apiClient.patch(`/api/admin/updateManager/${id}`, payload)
+}
+
+export function deleteManager(id) {
+  return apiClient.delete(`/api/admin/deleteManager/${id}`)
+}

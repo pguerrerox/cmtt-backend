@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-02-24
+
+### Added
+- Added an MVP login flow with a `/login` page that lists managers and simulates session selection.
+- Added a manager landing page at `/manager` with role-based project visibility (all projects for `Team Leader`, assigned projects for other roles).
+- Added a project details page at `/projects/:projectNumber` with milestone review and update support for actual dates and `status_notes`.
+- Added frontend API helpers for `PATCH` and `DELETE` plus project/manager update endpoints used by the new admin and project flows.
+
+### Changed
+- Updated the Home page to a read-only portfolio table with the new columns: project description, kickoff actual date, and delivery planned date.
+- Updated the app header with login/logout controls and manager-aware navigation.
+- Updated the admin manager list UI to show right-aligned hover actions with gear/trash icon controls.
+
+### Fixed
+- Fixed admin manager form status messaging so create and edit actions report the correct success state immediately.
+
 ## [0.2.1] - 2026-02-22
 
 ### Added

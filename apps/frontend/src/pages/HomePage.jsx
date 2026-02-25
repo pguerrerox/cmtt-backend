@@ -1,15 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { getManagersPublic } from '../shared/api/managers.js'
+import { useEffect, useState } from 'react'
 import { getProjects } from '../shared/api/projects.js'
-import { useSelectedManager } from '../state/selectedManager.context.jsx'
 import { formatEpochDate } from '../shared/date.js'
 
 export default function HomePage() {
-  const navigate = useNavigate()
-  const { selectedManager, setSelectedManager } = useSelectedManager()
-
-  const [managers, setManagers] = useState([])
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -19,11 +12,7 @@ export default function HomePage() {
       try {
         setLoading(true)
         setError('')
-        const [managerData, projectsResponse] = await Promise.all([
-          getManagersPublic(),
-          getProjects()
-        ])
-        setManagers(managerData)
+        const projectsResponse = await getProjects()
         setProjects(projectsResponse?.data ?? [])
       } catch (err) {
         setError(err.message)
@@ -35,48 +24,13 @@ export default function HomePage() {
     loadData()
   }, [])
 
-  const managerById = useMemo(() => {
-    const map = new Map()
-    for (const manager of managers) {
-      map.set(String(manager.id), manager)
-    }
-    return map
-  }, [managers])
-
   return (
     <section className="stack gap-lg">
       <div className="panel hero">
         <div>
           <p className="eyebrow">Project Operations</p>
           <h2>Commitment Managers Tracker</h2>
-          <p>Select a manager, create projects, and monitor delivery dates.</p>
-        </div>
-
-        <div className="inline-controls">
-          <label htmlFor="manager-select">Manager</label>
-          <select
-            id="manager-select"
-            value={selectedManager?.id ?? ''}
-            onChange={(event) => {
-              const selected = managerById.get(event.target.value)
-              setSelectedManager(selected ?? null)
-            }}
-          >
-            <option value="">Select manager...</option>
-            {managers.map((manager) => (
-              <option key={manager.id} value={manager.id}>
-                {manager.fullname} ({manager.name})
-              </option>
-            ))}
-          </select>
-
-          <button
-            type="button"
-            disabled={!selectedManager}
-            onClick={() => navigate('/projects/new')}
-          >
-            Create Project
-          </button>
+          <p>Track all projects and monitor kickoff and delivery milestones.</p>
         </div>
       </div>
 
@@ -97,15 +51,17 @@ export default function HomePage() {
               <thead>
                 <tr>
                   <th>Project #</th>
+                  <th>Project Description</th>
                   <th>Customer</th>
                   <th>Manager</th>
-                  <th>Delivery Date</th>
+                  <th>Kickoff Date (Actual)</th>
+                  <th>Delivery Date (Planned)</th>
                 </tr>
               </thead>
               <tbody>
                 {projects.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="empty-row">
+                    <td colSpan={6} className="empty-row">
                       No projects yet.
                     </td>
                   </tr>
@@ -113,8 +69,10 @@ export default function HomePage() {
                 {projects.map((project) => (
                   <tr key={project.id}>
                     <td>{project.project_number}</td>
+                    <td>{project.project_description || '-'}</td>
                     <td>{project.customer_name || '-'}</td>
                     <td>{project.manager_name || '-'}</td>
+                    <td>{formatEpochDate(project.kickoff_date_act)}</td>
                     <td>{formatEpochDate(project.ship_date_planned)}</td>
                   </tr>
                 ))}
