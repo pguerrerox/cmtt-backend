@@ -3,7 +3,7 @@
 React + Vite frontend for the Commitment Managers Tracking Tool.
 
 ## Pages
-- `/`: manager selector (`GET /api/managers`), create-project CTA, and projects list (`GET /api/projects`).
+- `/`: manager selector (`GET /api/managers`), create-project CTA, and projects list (`GET /api/projects`) with lazy client-side search and sorting.
 - `/admin`: admin manager view (`GET /api/admin/managers`) and manager creation form (`POST /api/admin/createManager`) with radio-role selection.
 - `/projects/new`: project creation form (`POST /api/createProject`) without planned date fields.
 

@@ -117,6 +117,16 @@ body {
   margin-top: 0.8rem;
 }
 
+.project-list-controls button {
+  margin-top: 1.35rem;
+}
+
+.results-note {
+  margin: 0.55rem 0 0;
+  color: #275068;
+  font-size: 0.9rem;
+}
+
 label {
   display: flex;
   flex-direction: column;
@@ -381,6 +391,10 @@ thead th {
   .inline-controls {
     grid-template-columns: 220px 1fr auto;
     align-items: end;
+  }
+
+  .project-list-controls button {
+    margin-top: 0;
   }
 
   .form-grid {

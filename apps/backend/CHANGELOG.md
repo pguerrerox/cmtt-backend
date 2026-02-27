@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-02-26
+
+### Added
+- Added new domain tables and schemas for `salesmanagers`, `projecteng`, `customers`, and `facilities`.
+- Added repositories and payload field allowlists for sales managers, project engineers, customers, and facilities.
+- Added new API routes for entity CRUD/read flows, including admin create/update/delete routes for sales managers and project engineers.
+- Added repository and route tests covering the new entities and route wiring.
+
+### Changed
+- Updated DB bootstrap and test DB bootstrap to initialize the new entity tables with foreign-key-safe ordering.
+
 ## [0.6.1] - 2026-02-22
 
 ### Added

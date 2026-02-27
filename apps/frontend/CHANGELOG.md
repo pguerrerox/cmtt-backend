@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-02-26
+
+### Added
+- Added lazy client-side project search and sorting controls on the Home page (`/`) for project number, customer, and description.
+- Added the same lazy search and sorting behavior to the Manager Projects page (`/manager`) for consistency.
+
+### Changed
+- Updated project table empty-state messaging to distinguish between no data and no search matches.
+- Updated frontend README page documentation to include Home page search/sort capabilities.
+
 ## [0.3.0] - 2026-02-24
 
 ### Added

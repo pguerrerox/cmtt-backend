@@ -6,6 +6,10 @@ import managerSchema from './schema/manager.schema.js'
 import projectSchema from './schema/project.schema.js'
 import operationsSchema from './schema/operations.schema.js'
 import projectsLookupSchema from './schema/projectsLookup.schema.js'
+import salesmanagerSchema from './schema/salesmanager.schema.js'
+import projectEngSchema from './schema/projecteng.schema.js'
+import customerSchema from './schema/customer.schema.js'
+import facilitySchema from './schema/facility.schema.js'
 
 /**
  * Database bootstrap module.
@@ -54,5 +58,17 @@ console.log('DB-> Operations planned dates table initialized')
 
 db.prepare(projectsLookupSchema).run()
 console.log('DB-> Projects lookup queue table initialized')
+
+db.prepare(salesmanagerSchema).run()
+console.log('DB-> Sales managers table initialized')
+
+db.prepare(projectEngSchema).run()
+console.log('DB-> Project engineers table initialized')
+
+db.prepare(customerSchema).run()
+console.log('DB-> Customers table initialized')
+
+db.prepare(facilitySchema).run()
+console.log('DB-> Facilities table initialized')
 
 export default db
