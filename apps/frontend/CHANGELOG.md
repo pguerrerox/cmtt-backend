@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-02-26
+
+### Added
+- Added a tabbed admin workspace with dedicated sections for Managers, Customers, Project Engineers, and Sales Managers.
+- Added a customer details page with customer profile editing and facility management (create, edit, delete).
+- Added frontend API modules for customers, facilities, project engineers, and sales managers.
+
+### Changed
+- Updated admin routing to support deep-linkable tab URLs and customer detail navigation under `/admin/customers/:customerId`.
+- Refactored manager administration UI into a dedicated tab component while preserving existing manager CRUD behavior.
+- Expanded admin styles with responsive tab navigation and shared entity list layouts.
+
 ## [0.4.0] - 2026-02-26
 
 ### Added

@@ -1,5 +1,11 @@
 # TODO
 
+## P1
+- Change the design of the `admin page` to use tabs as below:
+  - Managers: Button to Add Manager and List of added Managers.
+  - Customers: Button to Add Customers and List of added Customer, each customer is clickable and takes to a Customer Page, In the customer Page will have the all the customer information and a list of facilities and button to add facilities.  
+  - Project Engineers: Button to add Project Engineers, List of added Project Eng.
+  - Sales Managers: Button to add Sales Managers and List of added Sales Managers.
 ## P
 - Modifications to the Projects table.
   - Add column `status`: Ordered | Internal | Kicked | Packed | Shipped | Cancelled. 

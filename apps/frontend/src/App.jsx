@@ -1,10 +1,11 @@
 import { Link, Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import HomePage from './pages/HomePage.jsx'
-import AdminPage from './pages/AdminPage.jsx'
+import AdminTabsPage from './pages/AdminTabsPage.jsx'
 import CreateProjectPage from './pages/CreateProjectPage.jsx'
 import ProjectDetailsPage from './pages/ProjectDetailsPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import ManagerProjectsPage from './pages/ManagerProjectsPage.jsx'
+import AdminCustomerDetailsPage from './pages/AdminCustomerDetailsPage.jsx'
 import { useSelectedManager } from './state/selectedManager.context.jsx'
 
 export default function App() {
@@ -43,7 +44,9 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/manager" element={<ManagerProjectsPage />} />
-          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin" element={<Navigate to="/admin/managers" replace />} />
+          <Route path="/admin/:tab" element={<AdminTabsPage />} />
+          <Route path="/admin/customers/:customerId" element={<AdminCustomerDetailsPage />} />
           <Route path="/projects/new" element={<CreateProjectPage />} />
           <Route path="/projects/:projectNumber" element={<ProjectDetailsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
