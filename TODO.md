@@ -1,15 +1,51 @@
 # TODO
 
 ## P1
-- Change the design of the `admin page` to use tabs as below:
-  - Managers: Button to Add Manager and List of added Managers.
-  - Customers: Button to Add Customers and List of added Customer, each customer is clickable and takes to a Customer Page, In the customer Page will have the all the customer information and a list of facilities and button to add facilities.  
-  - Project Engineers: Button to add Project Engineers, List of added Project Eng.
-  - Sales Managers: Button to add Sales Managers and List of added Sales Managers.
-## P
-- Modifications to the Projects table.
-  - Add column `status`: Ordered | Internal | Kicked | Packed | Shipped | Cancelled. 
+- Overhaul of the Projects table, this approach follows a project's complete life cycle with in our project management processes.
+  this is a psaudo schema, need to translate to a real schema, these are all the columsn for the projects table.
+    - `id`: INTEGER PRIMARY KEY AUTOINCREMENT
+    - `status`: TEXT not null, default Internal, can be any of this: Ordered, Internal, Kicked, Packed, Shipped, Cancelled
+    - `project_number`: number UNIQUE NOT NULL, can only by a 6 digit number xxxxxx
+    - `project_description` TEXT
+    customer_name TEXT,
   - Add column `type`: Machine | Auxiliaries | Mold | Refurb | Conversions.
+    manager_id INTEGER,
+    kickoff_date_planned INTEGER,
+    kickoff_date_act INTEGER,
+    mih_date_planned INTEGER,
+    mih_date_act INTEGER,
+    inspection_date_planned INTEGER,
+    inspection_date_act INTEGER,
+    process_planning_date_planned INTEGER,
+    process_planning_date_act INTEGER,
+    milton_date_planned INTEGER,
+    pih_date_planned INTEGER,
+    pih_date_act INTEGER,
+    mfg_date_planned INTEGER,
+    mfg_date_act INTEGER,
+    rih_date_planned INTEGER,
+    rih_date_act INTEGER,
+    hr_assy_date_planned INTEGER,
+    assy_date_planned INTEGER,
+    assy_date_act INTEGER,
+    test_date_planned INTEGER,
+    test_date_act INTEGER,
+    pp_recut_date_planned INTEGER,
+    pp_recut_date_act INTEGER,
+    recut_mfg_date_planned INTEGER,
+    post_recut_test_date_planned INTEGER,
+    dev_test_date_planned INTEGER,
+    machine_comt_date_planned INTEGER,
+    system_test_planned INTEGER,
+    system_test_act INTEGER,
+    ops_complete_date_planned INTEGER,
+    ship_date_planned INTEGER,
+    ship_date_act INTEGER,
+    status_notes TEXT,
+    FOREIGN KEY (manager_id) REFERENCES managers(id) ON DELETE SET NULL
+
+
+
 ## P
 - Create logic for `type`
   - This column will be calculated from the projects description nomenclature using regexp. I think this should happen in one of two places; 1. During project creation the frontend will propose a type for the user to accept. 2. During the enrichtment process in the backend the submitted value must be validated and updated if found wrong (a feedback message should be raised to the frontend). 

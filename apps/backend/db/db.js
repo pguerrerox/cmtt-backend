@@ -31,7 +31,7 @@ const __dirname = path.dirname(__filename)
  * Uses `DB_PATH` when provided, resolved relative to this module.
  * @type {string}
  */
-const dbPath = path.resolve(__dirname, process.env.DB_PATH ?? '/databases/dev_main.db')
+const dbPath = path.resolve(__dirname, process.env.DB_PATH ?? 'databases/dev_main.db')
 console.log(`\nDB-> Path: ${dbPath}`)
 
 // Create database if it doesn't exist
